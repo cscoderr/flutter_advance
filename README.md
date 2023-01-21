@@ -2,8 +2,8 @@
 
 Feel free to star, fork and contribute.
 
-## Animated Lock || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/animated_lock.dart)
-![Grid Magnification](gifs/animated_lock.gif)
+### Animated Lock || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/animated_lock.dart)
+<img src="gifs/animated_lock.gif" width="50%" vspace="10" hspace="10"/>
 
 
 ## 🤓 Developer
