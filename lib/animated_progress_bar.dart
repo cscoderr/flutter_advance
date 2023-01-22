@@ -90,7 +90,8 @@ class ProgressBarPainter extends CustomPainter {
 
     for (var i = 0; i < 360; i += 40) {
       final paint = Paint()
-        ..color = Colors.red
+        ..color =
+            Color.fromRGBO(255 - (i * 8), 255 - (i * 3), 255 - (i * 5), 1.0)
         ..style = PaintingStyle.stroke
         ..strokeWidth = borderAnimation.value;
 
