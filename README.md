@@ -5,6 +5,9 @@ Feel free to star, fork and contribute.
 ### Animated Lock || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/animated_lock.dart)
 <img src="gifs/animated_lock.gif" width="50%" vspace="10" hspace="10"/>
 
+### Animated Progress Bar || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/animated_progress_bar.dart)
+<img src="gifs/progress_bar.gif" width="50%" vspace="10" hspace="10"/>
+
 
 ## 🤓 Developer
 
