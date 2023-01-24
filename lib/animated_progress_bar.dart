@@ -80,14 +80,6 @@ class ProgressBarPainter extends CustomPainter {
   final Animation<double> borderAnimation;
   @override
   void paint(Canvas canvas, Size size) {
-    final colors = [
-      Colors.red,
-      Colors.green,
-      Colors.yellow,
-      Colors.pink,
-      Colors.purpleAccent,
-    ];
-
     for (var i = 0; i < 360; i += 40) {
       final paint = Paint()
         ..color =
@@ -101,11 +93,11 @@ class ProgressBarPainter extends CustomPainter {
               center: toPolar(
                 size.center(Offset.zero),
                 i.radians,
-                rotationAnimation.value <= 90.radians ? 100 : 80,
+                rotationAnimation.value <= 180.radians ? 100 : 80,
               ),
               radius: radiusAnimation.value,
             ),
-            Radius.circular(rotationAnimation.value <= 90.radians ? 20 : 5),
+            Radius.circular(rotationAnimation.value <= 180.radians ? 20 : 5),
           ),
           paint);
     }
