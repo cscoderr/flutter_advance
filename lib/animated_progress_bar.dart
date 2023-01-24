@@ -27,7 +27,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    _radiusAnimation = Tween(begin: 20.0, end: 30.0).animate(
+    _radiusAnimation = Tween(begin: 20.0, end: 40.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
@@ -93,12 +93,11 @@ class ProgressBarPainter extends CustomPainter {
               center: toPolar(
                 size.center(Offset.zero),
                 i.radians,
-                // rotationAnimation.value >= 90.radians ? 80 : 100,
-                80,
+                100,
               ),
               radius: radiusAnimation.value,
             ),
-            Radius.circular(rotationAnimation.value <= 90.radians ? 20 : 5),
+            const Radius.circular(20),
           ),
           paint);
     }
