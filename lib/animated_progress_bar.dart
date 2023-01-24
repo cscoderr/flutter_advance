@@ -21,7 +21,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1200),
     )..forward();
     _rotationAnimation = Tween(begin: 0.radians, end: 180.radians).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
@@ -80,14 +80,6 @@ class ProgressBarPainter extends CustomPainter {
   final Animation<double> borderAnimation;
   @override
   void paint(Canvas canvas, Size size) {
-    final colors = [
-      Colors.red,
-      Colors.green,
-      Colors.yellow,
-      Colors.pink,
-      Colors.purpleAccent,
-    ];
-
     for (var i = 0; i < 360; i += 40) {
       final paint = Paint()
         ..color =
@@ -101,7 +93,8 @@ class ProgressBarPainter extends CustomPainter {
               center: toPolar(
                 size.center(Offset.zero),
                 i.radians,
-                rotationAnimation.value <= 90.radians ? 100 : 80,
+                // rotationAnimation.value >= 90.radians ? 80 : 100,
+                80,
               ),
               radius: radiusAnimation.value,
             ),
