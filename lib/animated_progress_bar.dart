@@ -15,19 +15,24 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
   late Animation<double> _rotationAnimation;
   late Animation<double> _radiusAnimation;
   late Animation<double> _borderAnimation;
+  late Animation<double> _radius;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2500),
     )..forward();
     _rotationAnimation = Tween(begin: 0.radians, end: 180.radians).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    _radiusAnimation = Tween(begin: 20.0, end: 30.0).animate(
+    _radiusAnimation = Tween(begin: 20.0, end: 40.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _radius = Tween(begin: 20.0, end: 5.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
@@ -60,6 +65,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
               rotationAnimation: _rotationAnimation,
               radiusAnimation: _radiusAnimation,
               borderAnimation: _borderAnimation,
+              radius: _radius,
             ),
             size: MediaQuery.of(context).size,
           ),
@@ -74,10 +80,12 @@ class ProgressBarPainter extends CustomPainter {
     required this.rotationAnimation,
     required this.radiusAnimation,
     required this.borderAnimation,
+    required this.radius,
   });
   final Animation<double> rotationAnimation;
   final Animation<double> radiusAnimation;
   final Animation<double> borderAnimation;
+  final Animation<double> radius;
   @override
   void paint(Canvas canvas, Size size) {
     for (var i = 0; i < 360; i += 40) {
@@ -88,18 +96,19 @@ class ProgressBarPainter extends CustomPainter {
         ..strokeWidth = borderAnimation.value;
 
       canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromCircle(
-              center: toPolar(
-                size.center(Offset.zero),
-                i.radians,
-                rotationAnimation.value <= 180.radians ? 100 : 80,
-              ),
-              radius: radiusAnimation.value,
+        RRect.fromRectAndRadius(
+          Rect.fromCircle(
+            center: toPolar(
+              size.center(Offset.zero),
+              i.radians,
+              100,
             ),
-            Radius.circular(rotationAnimation.value <= 180.radians ? 20 : 5),
+            radius: radiusAnimation.value,
           ),
-          paint);
+          Radius.circular(radius.value),
+        ),
+        paint,
+      );
     }
   }
 
