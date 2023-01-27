@@ -1,4 +1,4 @@
-import 'package:animation_playground/animated_progress_bar.dart';
+import 'package:animation_playground/animated_card.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Advance',
       theme: ThemeData.dark(),
-      home: const AnimatedProgressBar(),
+      home: const AnimatedCard(),
     );
   }
 }
