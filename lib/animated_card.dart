@@ -128,75 +128,78 @@ class _AnimatedCardState extends State<AnimatedCard>
           });
         }
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 20,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  Transform.scale(
-                    scale: _scaleAnimation.value,
-                    child: Container(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Transform.scale(
+                      scale: _scaleAnimation.value,
+                      child: Container(
+                        height: 70,
+                        width: 70,
+                        decoration: BoxDecoration(
+                          color: widget.activeColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Container(
                       height: 70,
                       width: 70,
                       decoration: BoxDecoration(
-                        color: widget.activeColor,
-                        shape: BoxShape.circle,
+                          shape: BoxShape.circle,
+                          color: (widget.inactiveColor ?? widget.activeColor)
+                              .withOpacity(_opacityAnimation.value)),
+                      child: const Icon(
+                        Icons.message,
+                        size: 40,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  Container(
-                    height: 70,
-                    width: 70,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (widget.inactiveColor ?? widget.activeColor)
-                            .withOpacity(_opacityAnimation.value)),
-                    child: const Icon(
-                      Icons.message,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Perfect for learning how flutter impeller works, prototyping a new idea, or creating a demo to share online',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: _isActive ? Colors.white : Colors.black,
-                    ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Learn More',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: _isActive ? Colors.white : Colors.black,
-                    ),
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Perfect for learning how flutter impeller works, prototyping a new idea, or creating a demo to share online',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: _isActive ? Colors.white : Colors.black,
+                      ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Learn More',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: _isActive ? Colors.white : Colors.black,
+                      ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
