@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Advance',
       theme: ThemeData.dark(),
-      home: const AnimatedCard(),
+      home: const AnimatedCardPage(),
     );
   }
 }
