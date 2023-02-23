@@ -19,7 +19,7 @@ class _HomePageState extends State<PhonePatternPage> {
             final renderbox = context.findRenderObject() as RenderBox;
             final position = renderbox.globalToLocal(details.globalPosition);
             setState(() {
-              currentOffset = position - const Offset(30, 30);
+              currentOffset = position - const Offset(0, 50);
             });
             for (var i = 0; i < 9; i++) {
               final circlePosition = getCurrentCirclePosition(
