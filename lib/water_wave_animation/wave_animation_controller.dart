@@ -56,7 +56,6 @@ class _WaveAnimationContainerState extends State<WaveAnimationContainer>
   @override
   void didUpdateWidget(covariant WaveAnimationContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print(widget.seconds);
     if (widget.seconds != oldWidget.seconds) {
       _controller.duration = Duration(milliseconds: widget.seconds);
       if (_controller.isAnimating) {
