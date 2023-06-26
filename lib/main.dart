@@ -1,4 +1,4 @@
-import 'package:animation_playground/phone_pattern.dart';
+import 'package:animation_playground/water_wave_animation/water_wave_animation_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Advance',
       theme: ThemeData.dark(),
-      home: const PhonePatternPage(),
+      home: const WaterWaveAnimationPage(),
     );
   }
 }
