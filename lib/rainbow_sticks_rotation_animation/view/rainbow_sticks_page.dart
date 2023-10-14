@@ -17,7 +17,7 @@ class _RainbowSticksPageState extends State<RainbowSticksPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1500),
     );
   }
 
@@ -68,11 +68,9 @@ class _CiclePainter extends CustomPainter {
     double circleCount = 360 / 18;
 
     for (var i = 0; i < angleDegree; i += 18) {
-      double index = (i / 18) + 1;
-      print('index - $index');
-      index = (index / circleCount);
-      final startInterval = (index * 0.5);
-      final endInterval = index;
+      final index = (i / 18) / 2;
+      final startInterval = index * 0.075;
+      final endInterval = (index + 0.5) * 0.095;
       print(
           'index $index : startInterval $startInterval - endInterval $endInterval');
       final animation = Tween(begin: 0.0, end: math.pi).animate(
@@ -80,7 +78,7 @@ class _CiclePainter extends CustomPainter {
           parent: _animationController,
           curve: Interval(
             startInterval,
-            endInterval.toDouble(),
+            endInterval,
             curve: Curves.easeInOut,
           ),
         ),
