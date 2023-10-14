@@ -12,157 +12,128 @@ class RainbowSticksPage extends StatefulWidget {
 class _RainbowSticksPageState extends State<RainbowSticksPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation _rotationAnimation;
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    _rotationAnimation = TweenSequence([
-      TweenSequenceItem(
-          tween: Tween(begin: 0.radians, end: 360.radians), weight: 1)
-    ]).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.linear,
-      ),
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
     );
-    // _animationController.repeat();
-
-    _animationController.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _animationController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomPaint(
-        painter: CiclePainter(
-          animationController: _animationController,
-          rotation: _rotationAnimation.value,
-        ),
-        size: MediaQuery.of(context).size,
+      body: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: _CiclePainter(
+              animationController: _animationController,
+            ),
+            size: MediaQuery.of(context).size,
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          print(_animationController.status);
           if (_animationController.status == AnimationStatus.completed) {
-            _animationController.reset();
+            _animationController.reverse();
           } else {
             _animationController.forward();
           }
         },
-        label: const Text('Start Animation'),
+        label: const Text('Animate'),
         icon: const Icon(Icons.play_arrow),
       ),
     );
   }
 }
 
-class CiclePainter extends CustomPainter {
-  CiclePainter({
-    required this.animationController,
-    required this.rotation,
-  });
-  final AnimationController animationController;
-  final double rotation;
+class _CiclePainter extends CustomPainter {
+  _CiclePainter({
+    required AnimationController animationController,
+  }) : _animationController = animationController;
+  final AnimationController _animationController;
 
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
-      ..color = Colors.black
+      ..color = Colors.white60
       ..strokeWidth = 1;
 
     double innerCircleRadius = 35;
     double outerCircleRaius = 170;
-    double count = 20;
-    final angleStep = (math.pi * 2) / count;
+    double angleDegree = 360;
 
-    final center = size.center(Offset.zero);
-
-    final animation = Tween(begin: 0, end: math.pi);
-
-    for (var i = 0; i < 10; i++) {
-      final angle = i * angleStep;
-
-      final x = center.dx + math.cos(angle) * innerCircleRadius;
-      final y = center.dy + math.sin(angle) * innerCircleRadius;
-
-      final outerX = center.dx + math.cos(angle) * outerCircleRaius;
-      final outerY = center.dy + math.sin(angle) * outerCircleRaius;
-
-      final midX = (x + outerX) / 2;
-      final midY = (y + outerY) / 2;
-
-      final animation0 = animation.animate(
+    for (var i = 0; i < angleDegree; i += 18) {
+      final index = (i / 18) / 2;
+      final startInterval = index * 0.08;
+      final endInterval = (index + 0.5) * 0.095;
+      print(
+          'index $index : startInterval ${startInterval.toStringAsPrecision(2)} - endInterval ${endInterval.toStringAsPrecision(2)}');
+      final animation = Tween(begin: 0.0, end: math.pi).animate(
         CurvedAnimation(
-          parent: animationController,
-          curve: Interval(
-            (i / 20) * 0.5,
-            1.0,
-          ),
+          parent: _animationController,
+          curve: Interval(startInterval, endInterval),
         ),
       );
 
+      final innerCirclePoint =
+          toPolar(size.center(Offset.zero), i.radians, innerCircleRadius);
+
+      final outerCirclePoint =
+          toPolar(size.center(Offset.zero), i.radians, outerCircleRaius);
+
+      final xCenter = (innerCirclePoint.dx + outerCirclePoint.dx) / 2;
+      final yCenter = (innerCirclePoint.dy + outerCirclePoint.dy) / 2;
+
       canvas
         ..save()
-        ..translate(midX, midY)
-        ..rotate(animation0.value.toDouble())
-        ..translate(-midX, -midY);
+        ..translate(xCenter, yCenter)
+        ..rotate(animation.value)
+        ..translate(-xCenter, -yCenter);
 
-      canvas.drawLine(
-        Offset(x, y),
-        Offset(outerX, outerY),
-        linePaint,
-      );
+      canvas.drawLine(innerCirclePoint, outerCirclePoint, linePaint);
 
-      canvas.drawCircle(
-        Offset(x, y),
-        7,
-        Paint()..color = _innerColor(i),
-      );
+      _drawCircle(canvas, innerCirclePoint, _innerCircleColor(i));
 
-      canvas.drawCircle(
-        Offset(outerX, outerY),
-        7,
-        Paint()..color = _outerColor(i),
-      );
+      _drawCircle(canvas, outerCirclePoint, _outerCircleColor(i));
+
       canvas.restore();
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant _CiclePainter oldDelegate) => true;
 
-  Color _innerColor(int index) {
-    if (index > 0 && index <= 5) {
+  Color _innerCircleColor(int index) {
+    if (index > 0 && index <= 80) {
       return Colors.blue;
-    } else if (index > 5 && index <= 10) {
+    } else if (index > 60 && index <= 160) {
       return Colors.pink;
-    } else if (index > 10 && index <= 15) {
+    } else if (index > 140 && index <= 240) {
       return Colors.cyan;
     } else {
       return Colors.indigo;
     }
   }
 
-  Color _outerColor(int index) {
-    if (index > 0 && index <= 5) {
+  Color _outerCircleColor(int index) {
+    if (index > 0 && index <= 80) {
       return Colors.yellowAccent;
-    } else if (index > 5 && index <= 10) {
+    } else if (index > 60 && index <= 160) {
       return Colors.lightGreenAccent;
-    } else if (index > 10 && index <= 15) {
+    } else if (index > 140 && index <= 240) {
       return Colors.redAccent;
     } else {
       return Colors.orangeAccent;
     }
+  }
+
+  void _drawCircle(Canvas canvas, Offset offset, Color color) {
+    final paint = Paint()..color = color;
+    canvas.drawCircle(offset, 7, paint);
   }
 }
 
