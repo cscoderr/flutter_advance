@@ -17,7 +17,7 @@ class _RainbowSticksPageState extends State<RainbowSticksPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1000),
     );
   }
 
@@ -65,17 +65,24 @@ class _CiclePainter extends CustomPainter {
     double innerCircleRadius = 35;
     double outerCircleRaius = 170;
     double angleDegree = 360;
+    double circleCount = 360 / 18;
 
     for (var i = 0; i < angleDegree; i += 18) {
-      final index = (i / 18) / 2;
-      final startInterval = index * 0.08;
-      final endInterval = (index + 0.5) * 0.095;
+      double index = (i / 18) + 1;
+      print('index - $index');
+      index = (index / circleCount);
+      final startInterval = (index * 0.5);
+      final endInterval = index;
       print(
-          'index $index : startInterval ${startInterval.toStringAsPrecision(2)} - endInterval ${endInterval.toStringAsPrecision(2)}');
+          'index $index : startInterval $startInterval - endInterval $endInterval');
       final animation = Tween(begin: 0.0, end: math.pi).animate(
         CurvedAnimation(
           parent: _animationController,
-          curve: Interval(startInterval, endInterval),
+          curve: Interval(
+            startInterval,
+            endInterval.toDouble(),
+            curve: Curves.easeInOut,
+          ),
         ),
       );
 
@@ -108,11 +115,11 @@ class _CiclePainter extends CustomPainter {
   bool shouldRepaint(covariant _CiclePainter oldDelegate) => true;
 
   Color _innerCircleColor(int index) {
-    if (index > 0 && index <= 80) {
+    if (index > 0 && index <= 90) {
       return Colors.blue;
-    } else if (index > 60 && index <= 160) {
+    } else if (index > 60 && index <= 180) {
       return Colors.pink;
-    } else if (index > 140 && index <= 240) {
+    } else if (index > 140 && index <= 270) {
       return Colors.cyan;
     } else {
       return Colors.indigo;
@@ -120,11 +127,11 @@ class _CiclePainter extends CustomPainter {
   }
 
   Color _outerCircleColor(int index) {
-    if (index > 0 && index <= 80) {
+    if (index > 0 && index <= 90) {
       return Colors.yellowAccent;
-    } else if (index > 60 && index <= 160) {
+    } else if (index > 60 && index <= 180) {
       return Colors.lightGreenAccent;
-    } else if (index > 140 && index <= 240) {
+    } else if (index > 140 && index <= 270) {
       return Colors.redAccent;
     } else {
       return Colors.orangeAccent;
