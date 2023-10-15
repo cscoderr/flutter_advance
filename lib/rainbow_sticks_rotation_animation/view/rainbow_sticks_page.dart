@@ -17,23 +17,22 @@ class _RainbowSticksPageState extends State<RainbowSticksPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      upperBound: 0.6,
+      duration: const Duration(seconds: 2),
     );
+    _animationController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: _CiclePainter(
-              animationController: _animationController,
-            ),
-            size: MediaQuery.of(context).size,
-          );
-        },
+      body: CustomPaint(
+        painter: _CiclePainter(
+          animationController: _animationController,
+        ),
+        size: MediaQuery.of(context).size,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -62,36 +61,32 @@ class _CiclePainter extends CustomPainter {
       ..color = Colors.white60
       ..strokeWidth = 1;
 
-    double innerCircleRadius = 35;
+    double innerCircleRadius = 30;
     double outerCircleRaius = 170;
-    double angleDegree = 360;
-    double circleCount = 360 / 18;
+    const circleThreshold = 20;
+    final center = size.center(Offset.zero);
 
-    for (var i = 0; i < angleDegree; i += 18) {
-      final index = (i / 18) / 2;
-      final startInterval = index * 0.075;
-      final endInterval = (index + 0.5) * 0.095;
-      print(
-          'index $index : startInterval $startInterval - endInterval $endInterval');
-      final animation = Tween(begin: 0.0, end: math.pi).animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: Interval(
-            startInterval,
-            endInterval,
-            curve: Curves.easeInOut,
-          ),
-        ),
-      );
-
+    for (var i = 1; i <= circleThreshold; i++) {
       final innerCirclePoint =
-          toPolar(size.center(Offset.zero), i.radians, innerCircleRadius);
-
+          toPolar(center, i, circleThreshold, innerCircleRadius);
       final outerCirclePoint =
-          toPolar(size.center(Offset.zero), i.radians, outerCircleRaius);
+          toPolar(center, i, circleThreshold, outerCircleRaius);
 
       final xCenter = (innerCirclePoint.dx + outerCirclePoint.dx) / 2;
       final yCenter = (innerCirclePoint.dy + outerCirclePoint.dy) / 2;
+
+      double startValue = (i / circleThreshold) * 0.5;
+      double endValue = math.min(startValue + 0.1, 1.0);
+
+      final animation = Tween(begin: 0.0, end: 180.radians).animate(
+        CurvedAnimation(
+          parent: _animationController,
+          curve: Interval(
+            startValue,
+            endValue,
+          ),
+        ),
+      );
 
       canvas
         ..save()
@@ -113,11 +108,11 @@ class _CiclePainter extends CustomPainter {
   bool shouldRepaint(covariant _CiclePainter oldDelegate) => true;
 
   Color _innerCircleColor(int index) {
-    if (index > 0 && index <= 90) {
+    if (index > 0 && index <= 5) {
       return Colors.blue;
-    } else if (index > 60 && index <= 180) {
+    } else if (index > 5 && index <= 10) {
       return Colors.pink;
-    } else if (index > 140 && index <= 270) {
+    } else if (index > 10 && index <= 15) {
       return Colors.cyan;
     } else {
       return Colors.indigo;
@@ -125,11 +120,11 @@ class _CiclePainter extends CustomPainter {
   }
 
   Color _outerCircleColor(int index) {
-    if (index > 0 && index <= 90) {
+    if (index > 0 && index <= 5) {
       return Colors.yellowAccent;
-    } else if (index > 60 && index <= 180) {
+    } else if (index > 5 && index <= 10) {
       return Colors.lightGreenAccent;
-    } else if (index > 140 && index <= 270) {
+    } else if (index > 10 && index <= 15) {
       return Colors.redAccent;
     } else {
       return Colors.orangeAccent;
@@ -142,11 +137,14 @@ class _CiclePainter extends CustomPainter {
   }
 }
 
-Offset toPolar(Offset center, double radians, double radius) {
-  return center +
-      Offset(radius * math.cos(radians), radius * math.sin(radians));
-}
-
 extension NumX<T extends num> on T {
   double get radians => (this * math.pi) / 180.0;
+  double get stepsInAngle => (math.pi * 2) / this;
+}
+
+Offset toPolar(Offset center, int index, int total, double radius) {
+  final degree = index * total.stepsInAngle;
+  final dx = center.dx + math.cos(degree) * radius;
+  final dy = center.dy + math.sin(degree) * radius;
+  return Offset(dx, dy);
 }
