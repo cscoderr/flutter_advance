@@ -143,8 +143,8 @@ extension NumX<T extends num> on T {
 }
 
 Offset toPolar(Offset center, int index, int total, double radius) {
-  final degree = index * total.stepsInAngle;
-  final dx = center.dx + math.cos(degree) * radius;
-  final dy = center.dy + math.sin(degree) * radius;
-  return Offset(dx, dy);
+  final theta = index * total.stepsInAngle;
+  final dx = radius * math.cos(theta);
+  final dy = radius * math.sin(theta);
+  return Offset(dx, dy) + center;
 }
