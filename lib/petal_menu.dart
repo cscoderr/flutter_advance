@@ -8,8 +8,7 @@ class PetalMenu extends StatefulWidget {
   State<PetalMenu> createState() => _PetalMenuState();
 }
 
-class _PetalMenuState extends State<PetalMenu>
-    with SingleTickerProviderStateMixin {
+class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
   final colors = [
     Colors.orange,
     Colors.yellow,
@@ -21,22 +20,29 @@ class _PetalMenuState extends State<PetalMenu>
     Colors.red,
   ];
   bool isOpen = false;
-  Color selectedColor = Colors.red;
+  Color selectedColor = Colors.purple;
   late final AnimationController _animationController;
-  late final Animation<double> _animation;
+  late final AnimationController _animationController2;
 
   @override
   void initState() {
     super.initState();
 
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2000));
-    _animation = Tween(begin: 0.0, end: (360 / colors.length)).animate(
-      CurvedAnimation(
-          parent: _animationController, curve: const Interval(0, 0.5)),
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+
+    _animationController2 = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
     );
 
     _animationController.addListener(() {
+      setState(() {});
+    });
+
+    _animationController2.addListener(() {
       setState(() {});
     });
   }
@@ -44,11 +50,11 @@ class _PetalMenuState extends State<PetalMenu>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final center = size.center(Offset.zero);
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 250 ~/ 2),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -64,56 +70,83 @@ class _PetalMenuState extends State<PetalMenu>
         Center(
           child: Stack(
             alignment: AlignmentDirectional.center,
+            clipBehavior: Clip.none,
             children: [
-              // Positioned(
-              //   child: AnimatedContainer(
-              //     width: isOpen
-              //         ? MediaQuery.of(context).size.width * 0.9
-              //         : MediaQuery.of(context).size.width * 0.4,
-              //     height: MediaQuery.of(context).size.width * 0.9,
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       color: Colors.black12,
-              //       boxShadow: [
-              //         BoxShadow(
-              //           color: isOpen
-              //               ? Colors.black.withOpacity(0.4)
-              //               : Colors.transparent,
-              //           blurRadius: isOpen ? 30 : 10,
-              //           offset: Offset(
-              //             0,
-              //             isOpen ? 10 : 0,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //     duration: const Duration(milliseconds: 300),
-              //   ),
-              // ),
+              Positioned(
+                child: Container(
+                  width: _animationController
+                      .drive(
+                          Tween(begin: size.width * 0.4, end: size.width * 0.9))
+                      .value,
+                  // ? MediaQuery.of(context).size.width * 0.9
+                  // : MediaQuery.of(context).size.width * 0.4,
+                  height: MediaQuery.of(context).size.width * 0.9,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black12,
+                    boxShadow: [
+                      BoxShadow(
+                        color: _animationController
+                            .drive(ColorTween(
+                                begin: Colors.transparent,
+                                end: Colors.black.withOpacity(0.4)))
+                            .value!,
+                        // isOpen
+                        //     ? Colors.black.withOpacity(0.4)
+                        //     : Colors.transparent,
+                        blurRadius: isOpen ? 30 : 10,
+                        offset: Offset(
+                          0,
+                          isOpen ? 10 : 0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               ...colors.asMap().entries.map((e) {
-                final theta = e.key * colors.length.stepsInAngle;
+                final angle = e.key * (360 / colors.length);
 
-                final offset =
-                    toPolar(size.center(Offset.zero), e.key, colors.length, 75);
-
-                double startValue = (e.key / colors.length);
-                return Positioned(
-                  top: offset.dy,
-                  left: offset.dx,
-                  child: GestureDetector(
-                    onTap: () {
+                return GestureDetector(
+                  onTap: () {
+                    _animationController.reverse();
+                    setState(() {
+                      selectedColor = e.value;
+                    });
+                    Future.delayed(const Duration(milliseconds: 250), () {
                       setState(() {
-                        isOpen = !isOpen;
-                        selectedColor = e.value;
+                        _animationController.reset();
+                        isOpen = false;
                       });
-                    },
-                    child: Transform.rotate(
-                      angle: isOpen ? (e.key * (360 / colors.length)) : 0,
-                      child: AnimatedContainer(
-                        height: isOpen ? size.width * 0.40 : size.width * 0.25,
+                    });
+                  },
+                  child: Transform.rotate(
+                    angle: isOpen
+                        ? _animationController
+                            .drive(Tween(begin: 0.0, end: angle.radians))
+                            .value
+                        : 0,
+                    child: Transform(
+                      transform: Matrix4.identity()
+                        ..translate(
+                          Tween(begin: 0.0, end: 5.0)
+                              .animate(CurvedAnimation(
+                                  parent: _animationController2,
+                                  curve: const Interval(0.8, 1,
+                                      curve: Curves.elasticInOut)))
+                              .value,
+                          _animationController
+                              .drive(Tween(begin: 0.0, end: -size.width * 0.2))
+                              .value,
+                        ),
+                      child: Container(
+                        height: _animationController
+                            .drive(Tween(
+                                begin: size.width * 0.25,
+                                end: size.width * 0.40))
+                            .value,
+                        //(isOpen ? size.width * 0.40 : size.width * 0.25),
                         width: size.width * 0.25,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.bounceInOut,
                         decoration: BoxDecoration(
                           color: e.value,
                           gradient: LinearGradient(
@@ -125,35 +158,53 @@ class _PetalMenuState extends State<PetalMenu>
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
-                          borderRadius: BorderRadius.circular(isOpen
-                              ? ((size.width * 0.40) / 2) - 10
-                              : (size.width * 0.40) / 2),
+                          boxShadow: [
+                            BoxShadow(
+                                color: isOpen
+                                    ? Colors.black.withOpacity(0.4)
+                                    : Colors.transparent,
+                                blurRadius: 5,
+                                offset: const Offset(0, 12))
+                          ],
+                          borderRadius: BorderRadius.circular(
+                              ((size.width * 0.40) / 2) - 10),
                         ),
                       ),
                     ),
                   ),
                 );
               }).toList(),
-              if (!isOpen)
-                Positioned(
-                  child: GestureDetector(
-                    onTap: () {
-                      _animationController.reset();
-                      _animationController.forward();
-                      setState(() {
-                        isOpen = !isOpen;
-                      });
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      height: MediaQuery.of(context).size.width * 0.3,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: selectedColor,
-                      ),
-                    ),
-                  ),
-                ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250 ~/ 2),
+                child: !isOpen
+                    ? GestureDetector(
+                        onTap: () {
+                          _animationController.reset();
+                          _animationController.forward();
+
+                          _animationController2.reset();
+                          _animationController2
+                            ..forward()
+                            ..reverse();
+                          setState(() {
+                            isOpen = true;
+                          });
+                          Future.delayed(const Duration(milliseconds: 1000),
+                              () {
+                            _animationController2.reset();
+                          });
+                        },
+                        child: Container(
+                          width: size.width * 0.3,
+                          height: size.width * 0.3,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: selectedColor,
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
             ],
           ),
         ),
