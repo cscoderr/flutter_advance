@@ -1,5 +1,6 @@
-import 'package:animation_playground/core/core.dart';
+import 'package:animation_playground/rainbow_sticks_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 
 class PetalMenu extends StatefulWidget {
   const PetalMenu({super.key});
@@ -22,7 +23,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
   bool isOpen = false;
   Color selectedColor = Colors.purple;
   late final AnimationController _animationController;
-  late final AnimationController _animationController2;
 
   @override
   void initState() {
@@ -32,183 +32,195 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 250),
     );
+  }
 
-    _animationController2 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _openMenu() {
+    _animationController.reset();
+
+    const springDescription = SpringDescription(
+      mass: 1.0,
+      stiffness: 100.0,
+      damping: 10.0,
+    );
+    _animationController.animateWith(
+      SpringSimulation(
+        springDescription,
+        _animationController.value,
+        1,
+        _animationController.velocity,
+      ),
+    );
+    setState(() {
+      isOpen = true;
+    });
+  }
+
+  void _closeMenu(Color color) {
+    const springDescription = SpringDescription(
+      mass: 1.0,
+      stiffness: 100.0,
+      damping: 10.0,
+    );
+    _animationController.animateWith(
+      SpringSimulation(
+        springDescription,
+        1,
+        0,
+        _animationController.velocity,
+      ),
     );
 
-    _animationController.addListener(() {
-      setState(() {});
+    setState(() {
+      selectedColor = color;
     });
-
-    _animationController2.addListener(() {
-      setState(() {});
+    Future.delayed(const Duration(milliseconds: 250), () {
+      setState(() {
+        _animationController.reset();
+        isOpen = false;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 250 ~/ 2),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                selectedColor.withOpacity(0.2),
-                selectedColor.withOpacity(0.5),
-                selectedColor
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-        Center(
-          child: Stack(
-            alignment: AlignmentDirectional.center,
-            clipBehavior: Clip.none,
-            children: [
-              Positioned(
-                child: Container(
-                  width: _animationController
-                      .drive(
-                          Tween(begin: size.width * 0.4, end: size.width * 0.9))
-                      .value,
-                  // ? MediaQuery.of(context).size.width * 0.9
-                  // : MediaQuery.of(context).size.width * 0.4,
-                  height: MediaQuery.of(context).size.width * 0.9,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black12,
-                    boxShadow: [
-                      BoxShadow(
-                        color: _animationController
-                            .drive(ColorTween(
-                                begin: Colors.transparent,
-                                end: Colors.black.withOpacity(0.4)))
-                            .value!,
-                        // isOpen
-                        //     ? Colors.black.withOpacity(0.4)
-                        //     : Colors.transparent,
-                        blurRadius: isOpen ? 30 : 10,
-                        offset: Offset(
-                          0,
-                          isOpen ? 10 : 0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              ...colors.asMap().entries.map((e) {
-                final angle = e.key * (360 / colors.length);
-
-                return GestureDetector(
-                  onTap: () {
-                    _animationController.reverse();
-                    setState(() {
-                      selectedColor = e.value;
-                    });
-                    Future.delayed(const Duration(milliseconds: 250), () {
-                      setState(() {
-                        _animationController.reset();
-                        isOpen = false;
-                      });
-                    });
-                  },
-                  child: Transform.rotate(
-                    angle: isOpen
-                        ? _animationController
-                            .drive(Tween(begin: 0.0, end: angle.radians))
-                            .value
-                        : 0,
-                    child: Transform(
-                      transform: Matrix4.identity()
-                        ..translate(
-                          Tween(begin: 0.0, end: 5.0)
-                              .animate(CurvedAnimation(
-                                  parent: _animationController2,
-                                  curve: const Interval(0.8, 1,
-                                      curve: Curves.elasticInOut)))
-                              .value,
-                          _animationController
-                              .drive(Tween(begin: 0.0, end: -size.width * 0.2))
-                              .value,
-                        ),
-                      child: Container(
-                        height: _animationController
-                            .drive(Tween(
-                                begin: size.width * 0.25,
-                                end: size.width * 0.40))
-                            .value,
-                        //(isOpen ? size.width * 0.40 : size.width * 0.25),
-                        width: size.width * 0.25,
-                        decoration: BoxDecoration(
-                          color: e.value,
-                          gradient: LinearGradient(
-                            colors: [
-                              colors[e.key],
-                              colors[e.key],
-                              colors[e.key].withOpacity(0.7)
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                                color: isOpen
-                                    ? Colors.black.withOpacity(0.4)
-                                    : Colors.transparent,
-                                blurRadius: 5,
-                                offset: const Offset(0, 12))
-                          ],
-                          borderRadius: BorderRadius.circular(
-                              ((size.width * 0.40) / 2) - 10),
-                        ),
+    return Scaffold(
+      body: AnimatedBuilder(
+          animation: _animationController,
+          builder: (context, child) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                GestureDetector(
+                  onTap: () => _closeMenu(selectedColor),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250 ~/ 2),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          selectedColor.withOpacity(0.2),
+                          selectedColor.withOpacity(0.5),
+                          selectedColor
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
                     ),
                   ),
-                );
-              }).toList(),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250 ~/ 2),
-                child: !isOpen
-                    ? GestureDetector(
-                        onTap: () {
-                          _animationController.reset();
-                          _animationController.forward();
-
-                          _animationController2.reset();
-                          _animationController2
-                            ..forward()
-                            ..reverse();
-                          setState(() {
-                            isOpen = true;
-                          });
-                          Future.delayed(const Duration(milliseconds: 1000),
-                              () {
-                            _animationController2.reset();
-                          });
-                        },
-                        child: Container(
-                          width: size.width * 0.3,
-                          height: size.width * 0.3,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: selectedColor,
-                          ),
+                ),
+                Center(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        width: _animationController
+                            .drive(Tween(
+                                begin: size.width * 0.4, end: size.width * 0.9))
+                            .value,
+                        height: MediaQuery.of(context).size.width * 0.9,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white70,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: isOpen ? 30 : 10,
+                              offset: Offset(
+                                0,
+                                isOpen ? 10 : 0,
+                              ),
+                            ),
+                          ],
                         ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ],
-          ),
-        ),
-      ],
+                      ),
+                      ...colors.asMap().entries.map((e) {
+                        final angle = e.key * (360 / colors.length);
+
+                        return GestureDetector(
+                          onTap: () {
+                            _closeMenu(e.value);
+                            print("tap!!!!!");
+                          },
+                          child: Transform.rotate(
+                            angle: _animationController
+                                .drive(Tween(begin: 0.0, end: angle.radians))
+                                .value,
+                            child: Transform.translate(
+                              offset: Offset(
+                                0.0,
+                                _animationController
+                                    .drive(Tween(
+                                        begin: 0.0, end: -size.width * 0.2))
+                                    .value,
+                              ),
+                              child: Container(
+                                height: _animationController
+                                    .drive(Tween(
+                                        begin: size.width * 0.25,
+                                        end: size.width * 0.40))
+                                    .value,
+                                //(isOpen ? size.width * 0.40 : size.width * 0.25),
+                                width: size.width * 0.25,
+                                decoration: BoxDecoration(
+                                  color: e.value,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      colors[e.key],
+                                      colors[e.key],
+                                      colors[e.key].withOpacity(0.7)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: _animationController
+                                          .drive(ColorTween(
+                                              begin: Colors.transparent,
+                                              end: Colors.black
+                                                  .withOpacity(0.4)))
+                                          .value!,
+                                      // isOpen
+                                      //     ? Colors.black.withOpacity(0.4)
+                                      //     : Colors.transparent,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 12),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(
+                                      ((size.width * 0.40) / 2) - 10),
+                                ),
+                                clipBehavior: Clip.none,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      if (!isOpen)
+                        GestureDetector(
+                          onTap: _openMenu,
+                          child: Container(
+                            width: size.width * 0.3,
+                            height: size.width * 0.3,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: selectedColor,
+                            ),
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }),
     );
   }
 }
