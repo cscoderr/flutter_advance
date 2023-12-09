@@ -162,6 +162,7 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
                                     .value,
                                 //(isOpen ? size.width * 0.40 : size.width * 0.25),
                                 width: size.width * 0.25,
+                                margin: const EdgeInsets.all(100),
                                 decoration: BoxDecoration(
                                   color: e.value,
                                   gradient: LinearGradient(
