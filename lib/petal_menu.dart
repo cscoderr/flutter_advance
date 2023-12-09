@@ -33,6 +33,19 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 250),
       upperBound: 1.1,
     );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) {
+        const springDescription = SpringDescription(
+          mass: 0.8,
+          stiffness: 180.0,
+          damping: 20.0,
+        );
+        final simulation = SpringSimulation(springDescription,
+            _animationController.value, 0.03, _animationController.velocity);
+        _animationController.animateWith(simulation);
+      }
+    });
   }
 
   @override
