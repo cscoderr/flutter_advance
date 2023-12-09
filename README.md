@@ -2,6 +2,10 @@
 
 Feel free to star, fork and contribute.
 
+### Petal Menu Animation || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/petal_menu.dart)
+
+<img src="gifs/petal_menu.gif" width="50%" vspace="10" hspace="10"/>
+
 ### Rainbow Sticks Animation || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/rainbow_sticks_page.dart)
 
 <img src="gifs/rainbow_sticks_animation.gif" width="50%" vspace="10" hspace="10"/>
