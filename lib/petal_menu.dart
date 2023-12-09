@@ -31,6 +31,7 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
+      upperBound: 1.1,
     );
   }
 
@@ -44,37 +45,20 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
     _animationController.reset();
 
     const springDescription = SpringDescription(
-      mass: 1.0,
-      stiffness: 100.0,
-      damping: 10.0,
+      mass: 0.8,
+      stiffness: 180.0,
+      damping: 20.0,
     );
-    _animationController.animateWith(
-      SpringSimulation(
-        springDescription,
-        _animationController.value,
-        1,
-        _animationController.velocity,
-      ),
-    );
+    final simulation = SpringSimulation(
+        springDescription, 0, 1, _animationController.velocity);
+    _animationController.animateWith(simulation);
     setState(() {
       isOpen = true;
     });
   }
 
   void _closeMenu(Color color) {
-    const springDescription = SpringDescription(
-      mass: 1.0,
-      stiffness: 100.0,
-      damping: 10.0,
-    );
-    _animationController.animateWith(
-      SpringSimulation(
-        springDescription,
-        1,
-        0,
-        _animationController.velocity,
-      ),
-    );
+    _animationController.reverse();
 
     setState(() {
       selectedColor = color;
@@ -95,7 +79,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
           animation: _animationController,
           builder: (context, child) {
             return Stack(
-              clipBehavior: Clip.none,
               children: [
                 GestureDetector(
                   onTap: () => _closeMenu(selectedColor),
@@ -117,7 +100,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
                 Center(
                   child: Stack(
                     alignment: Alignment.center,
-                    clipBehavior: Clip.none,
                     children: [
                       Container(
                         width: _animationController
@@ -146,7 +128,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
                         return GestureDetector(
                           onTap: () {
                             _closeMenu(e.value);
-                            print("tap!!!!!");
                           },
                           child: Transform.rotate(
                             angle: _animationController
@@ -197,7 +178,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(
                                       ((size.width * 0.40) / 2) - 10),
                                 ),
-                                clipBehavior: Clip.none,
                               ),
                             ),
                           ),
