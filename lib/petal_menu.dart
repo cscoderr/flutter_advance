@@ -42,7 +42,7 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
           damping: 20.0,
         );
         final simulation = SpringSimulation(springDescription,
-            _animationController.value, 0.03, _animationController.velocity);
+            _animationController.value, 0.05, _animationController.velocity);
         _animationController.animateWith(simulation);
       }
     });
