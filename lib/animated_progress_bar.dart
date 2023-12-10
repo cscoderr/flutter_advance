@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class AnimatedProgressBar extends StatefulWidget {
   const AnimatedProgressBar({Key? key}) : super(key: key);
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const AnimatedProgressBar());
+
   @override
   State<AnimatedProgressBar> createState() => _AnimatedProgressBarState();
 }
@@ -46,6 +49,12 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
         _controller.forward();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override

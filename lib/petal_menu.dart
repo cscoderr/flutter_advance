@@ -5,6 +5,9 @@ import 'package:flutter/physics.dart';
 class PetalMenu extends StatefulWidget {
   const PetalMenu({super.key});
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const PetalMenu());
+
   @override
   State<PetalMenu> createState() => _PetalMenuState();
 }
@@ -72,7 +75,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
 
   void _closeMenu(Color color) {
     _animationController.reverse();
-
     setState(() {
       selectedColor = color;
     });
@@ -160,7 +162,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
                                         begin: size.width * 0.25,
                                         end: size.width * 0.40))
                                     .value,
-                                //(isOpen ? size.width * 0.40 : size.width * 0.25),
                                 width: size.width * 0.25,
                                 //Increasing the margin solve the hit issue
                                 margin: const EdgeInsets.all(100),
@@ -183,9 +184,6 @@ class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
                                               end: Colors.black
                                                   .withOpacity(0.4)))
                                           .value!,
-                                      // isOpen
-                                      //     ? Colors.black.withOpacity(0.4)
-                                      //     : Colors.transparent,
                                       blurRadius: 5,
                                       offset: const Offset(0, 12),
                                     )

@@ -1,4 +1,4 @@
-import 'package:animation_playground/petal_menu.dart';
+import 'package:animation_playground/app.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Advance',
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.light,
-      home: const PetalMenu(),
+      themeMode: ThemeMode.dark,
+      home: const App(),
     );
   }
 }

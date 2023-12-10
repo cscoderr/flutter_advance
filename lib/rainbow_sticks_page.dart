@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class RainbowSticksPage extends StatefulWidget {
   const RainbowSticksPage({super.key});
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const RainbowSticksPage());
+
   @override
   State<RainbowSticksPage> createState() => _RainbowSticksPageState();
 }

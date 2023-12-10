@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 class PhonePatternPage extends StatefulWidget {
   const PhonePatternPage({Key? key}) : super(key: key);
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const PhonePatternPage());
+
   @override
   State<PhonePatternPage> createState() => _HomePageState();
 }

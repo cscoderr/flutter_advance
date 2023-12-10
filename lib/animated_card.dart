@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class AnimatedCardPage extends StatefulWidget {
   const AnimatedCardPage({Key? key}) : super(key: key);
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const AnimatedCardPage());
+
   @override
   State<AnimatedCardPage> createState() => _AnimatedCardPageState();
 }

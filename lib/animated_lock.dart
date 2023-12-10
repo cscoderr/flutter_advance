@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class AnimatedLock extends StatefulWidget {
   const AnimatedLock({Key? key}) : super(key: key);
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const AnimatedLock());
+
   @override
   State<AnimatedLock> createState() => _AnimatedLockState();
 }

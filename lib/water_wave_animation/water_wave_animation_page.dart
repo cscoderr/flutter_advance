@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 class WaterWaveAnimationPage extends StatefulWidget {
   const WaterWaveAnimationPage({super.key});
 
+  static PageRoute route() =>
+      MaterialPageRoute(builder: (_) => const WaterWaveAnimationPage());
+
   @override
   State<WaterWaveAnimationPage> createState() => _WaterWaveAnimationPageState();
 }
