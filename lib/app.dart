@@ -1,6 +1,7 @@
 import 'package:animation_playground/animated_card.dart';
 import 'package:animation_playground/animated_lock.dart';
 import 'package:animation_playground/animated_progress_bar.dart';
+import 'package:animation_playground/blur_animation.dart';
 import 'package:animation_playground/petal_menu.dart';
 import 'package:animation_playground/phone_pattern.dart';
 import 'package:animation_playground/rainbow_sticks_page.dart';
@@ -19,6 +20,11 @@ class App extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         children: [
+          SolidButton(
+            text: "Blur Animation",
+            onPressed: () => Navigator.of(context).push(BlurAnimation.route()),
+          ),
+          const SizedBox(height: 20),
           SolidButton(
             text: "Petal Menu Animation",
             onPressed: () => Navigator.of(context).push(PetalMenu.route()),
