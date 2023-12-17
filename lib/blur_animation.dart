@@ -12,46 +12,9 @@ class BlurAnimation extends StatefulWidget {
   State<BlurAnimation> createState() => _BlurAnimationState();
 }
 
-class _BlurAnimationState extends State<BlurAnimation>
-    with SingleTickerProviderStateMixin {
+class _BlurAnimationState extends State<BlurAnimation> {
   final text = "FOCUS";
-  late final AnimationController _animationController;
-  late final Animation<double> _scaleAnimation;
   Offset _offset = Offset.zero;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.ease),
-    );
-  }
-
-  Size _textDetails(BuildContext context, [text = ""]) {
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-              fontSize: 100,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-      ),
-      textDirection: TextDirection.ltr,
-      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-    )..layout(
-        minWidth: 0,
-        maxWidth: MediaQuery.of(context).size.width,
-      );
-    return textPainter.size;
-  }
-
   @override
   Widget build(BuildContext context) {
     final words = text.split("");
