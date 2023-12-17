@@ -98,7 +98,7 @@ class _BlurTextState extends State<BlurText> {
         sigmaY: shouldApplyBlur ? 7 : 0,
       ),
       child: AnimatedScale(
-        scale: shouldApplyBlur ? 1 : 1.1,
+        scale: shouldApplyBlur ? 1 : 1.2,
         duration: const Duration(milliseconds: 300),
         child: Text(
           widget.text,
