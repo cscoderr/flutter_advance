@@ -54,18 +54,6 @@ class _BlurAnimationState extends State<BlurAnimation> {
   }
 }
 
-extension IterableEx<T> on Iterable<T> {
-  Iterable<Widget> inBetween(Widget seperator) {
-    final items = <Widget>[];
-    for (var i = 0; i < length; i++) {
-      items.add(toList()[i] as Widget);
-      items.add(seperator);
-    }
-    print(items);
-    return items;
-  }
-}
-
 class BlurText extends StatefulWidget {
   const BlurText({
     super.key,
@@ -88,7 +76,7 @@ class _BlurTextState extends State<BlurText> {
   double value = 10;
   final GlobalKey _key = GlobalKey();
 
-  Size _textDetails(BuildContext context, [text = ""]) {
+  Size _getTextSize(BuildContext context, [text = ""]) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -107,16 +95,11 @@ class _BlurTextState extends State<BlurText> {
   }
 
   bool _shouldApplyBlur(BuildContext context) {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) return true;
 
-    // Get the global position of the text widget
     final Offset globalPosition = renderBox.localToGlobal(Offset.zero);
-
-    // Get the size of the text widget
     final Size textSize = renderBox.size;
-
-    final size = _textDetails(context, widget.text);
-
     final xInPosition = globalPosition.dx < widget.offset.dx &&
         globalPosition.dx + textSize.width > widget.offset.dx;
     final yInPosition = globalPosition.dy < widget.offset.dy &&
