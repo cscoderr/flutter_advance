@@ -9,3 +9,21 @@ Offset toPolar(Offset center, int index, int total, double radius) {
   final dy = radius * math.sin(theta);
   return Offset(dx, dy) + center;
 }
+
+Size getTextSize(BuildContext context, double fontSize, [text = ""]) {
+  final TextPainter textPainter = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout(
+      minWidth: 0,
+      maxWidth: MediaQuery.of(context).size.width,
+    );
+  return textPainter.size;
+}

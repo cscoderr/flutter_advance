@@ -76,24 +76,6 @@ class _BlurTextState extends State<BlurText> {
   double value = 10;
   final GlobalKey _key = GlobalKey();
 
-  Size _getTextSize(BuildContext context, [text = ""]) {
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          fontSize: widget.fontSize,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout(
-        minWidth: 0,
-        maxWidth: MediaQuery.of(context).size.width,
-      );
-    return textPainter.size;
-  }
-
   bool _shouldApplyBlur(BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox?;
     if (renderBox == null) return true;
@@ -110,7 +92,6 @@ class _BlurTextState extends State<BlurText> {
   @override
   Widget build(BuildContext context) {
     final shouldApplyBlur = _shouldApplyBlur(context);
-
     return ImageFiltered(
       imageFilter: ImageFilter.blur(
         sigmaX: shouldApplyBlur ? 7 : 0,
