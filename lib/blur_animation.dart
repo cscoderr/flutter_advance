@@ -39,13 +39,12 @@ class _BlurAnimationState extends State<BlurAnimation> {
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: words.asMap().entries.map((e) {
-                return BlurText(
-                  text: e.value,
-                  index: e.key,
-                  offset: _offset,
-                );
-              }).toList(),
+              children: words
+                  .map((e) => BlurText(
+                        text: e,
+                        offset: _offset,
+                      ))
+                  .toList(),
             ),
           ),
         ),
@@ -59,13 +58,11 @@ class BlurText extends StatefulWidget {
     super.key,
     required this.text,
     required this.offset,
-    required this.index,
     this.fontSize = 50,
   });
 
   final String text;
   final Offset offset;
-  final int index;
   final double fontSize;
 
   @override
@@ -73,7 +70,6 @@ class BlurText extends StatefulWidget {
 }
 
 class _BlurTextState extends State<BlurText> {
-  double value = 10;
   final GlobalKey _key = GlobalKey();
 
   bool _shouldApplyBlur(BuildContext context) {
@@ -81,7 +77,7 @@ class _BlurTextState extends State<BlurText> {
     if (renderBox == null) return true;
 
     final Offset globalPosition = renderBox.localToGlobal(Offset.zero);
-    final Size textSize = renderBox.size;
+    final textSize = renderBox.size;
     final xInPosition = globalPosition.dx < widget.offset.dx &&
         globalPosition.dx + textSize.width > widget.offset.dx;
     final yInPosition = globalPosition.dy < widget.offset.dy &&
