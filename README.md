@@ -1,5 +1,7 @@
 # 🔐 Flutter Advance ![GitHub stars](https://img.shields.io/github/stars/cscoderr/flutter_advance?style=social)
 
+You can see the animations on my [Twitter Profile](https://twitter.com/CsCoder_)
+
 Feel free to star, fork and contribute.
 
 ### Blur Animation || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/blur_animation.dart)
