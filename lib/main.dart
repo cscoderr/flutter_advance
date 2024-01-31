@@ -1,4 +1,4 @@
-import 'package:animation_playground/app.dart';
+import 'package:animation_playground/chrismas_tree.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,12 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Advance',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.dark,
-      home: const App(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Advance',
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.dark,
+        home: const ChrismasTree()
+        //const App(),
+        );
   }
 }
