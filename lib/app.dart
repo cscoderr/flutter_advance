@@ -5,6 +5,7 @@ import 'package:animation_playground/blur_animation.dart';
 import 'package:animation_playground/petal_menu.dart';
 import 'package:animation_playground/phone_pattern.dart';
 import 'package:animation_playground/rainbow_sticks_page.dart';
+import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:animation_playground/water_wave_animation/water_wave_animation_page.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,17 @@ class App extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         children: [
+          // ListTile(
+          //   leading: const Icon(Iconsax.eye_slash),
+          //   title: const Text('Blur Animation'),
+          //   trailing: const Icon(Iconsax.arrow_right_3),
+          //   onTap: () => Navigator.of(context).push(BlurAnimation.route()),
+          // ),
+          SolidButton(
+            text: "Swipe to pay",
+            onPressed: () => Navigator.of(context).push(SwipeToPayPage.route()),
+          ),
+          const SizedBox(height: 20),
           SolidButton(
             text: "Blur Animation",
             onPressed: () => Navigator.of(context).push(BlurAnimation.route()),
