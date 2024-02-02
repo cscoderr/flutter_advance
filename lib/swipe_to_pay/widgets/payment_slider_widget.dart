@@ -81,11 +81,9 @@ class _PaymentSliderWidgetState extends State<PaymentSliderWidget> {
                 isSliding = false;
                 setState(() {});
               },
-              child: _xDragOffet == widget.maxSliderWidth
-                  ? const SizedBox()
-                  : PaymetIconWidget(
-                      isActive: _xDragOffet == widget.maxSliderWidth,
-                    ),
+              child: PaymetIconWidget(
+                isActive: _xDragOffet == widget.maxSliderWidth,
+              ),
             ),
           ),
           if (1 == 2)

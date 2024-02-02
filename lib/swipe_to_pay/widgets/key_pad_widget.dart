@@ -13,14 +13,12 @@ class KeypadWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     const keys = '123456789.0x';
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         mainAxisSpacing: 20,
         crossAxisSpacing: 20,
-        mainAxisExtent: 80,
       ),
       itemBuilder: (context, index) {
         final key = keys[index];
@@ -41,12 +39,10 @@ class KeypadWidget extends StatelessWidget {
                     : Text(
                         key,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
                       ),
               ),
             ),

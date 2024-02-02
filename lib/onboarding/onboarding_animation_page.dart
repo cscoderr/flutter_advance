@@ -321,11 +321,11 @@ class __AnimatedImageState extends State<_AnimatedImage>
     _bounceAnimation = TweenSequence([
       TweenSequenceItem(
           tween: Tween(begin: 10.0, end: 5.0)
-              .chain(CurveTween(curve: Curves.easeIn)),
+              .chain(CurveTween(curve: Curves.easeInSine)),
           weight: 10),
       TweenSequenceItem(
           tween: Tween(begin: 5.0, end: 0.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
+              .chain(CurveTween(curve: Curves.easeOutSine)),
           weight: 8),
     ]).animate(_animationController);
   }
