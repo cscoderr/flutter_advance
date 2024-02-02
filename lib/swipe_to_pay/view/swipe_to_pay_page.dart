@@ -1,5 +1,7 @@
+import 'package:animation_playground/animated_progress_bar.dart';
+import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/scheduler.dart';
 
 class SwipeToPayPage extends StatefulWidget {
   const SwipeToPayPage({super.key});
@@ -13,10 +15,28 @@ class SwipeToPayPage extends StatefulWidget {
 
 class _SwipeToPayPageState extends State<SwipeToPayPage> {
   late final TextEditingController keyboardText;
+  bool isSuccessful = false;
+  final _sliderKey = GlobalKey();
+  double _sliderWidth = 0.0;
+  double _maxSliderWidth = 0.0;
+  final double _minSliderWidth = 70;
+  final double _containerHeight = 65;
+  double _maxDragExtent = 0.0;
+
   @override
   void initState() {
     super.initState();
     keyboardText = TextEditingController();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      final renderBox =
+          _sliderKey.currentContext?.findRenderObject() as RenderBox?;
+      setState(() {
+        _sliderWidth = renderBox?.size.width ?? 0.0;
+        _maxSliderWidth = _sliderWidth - _minSliderWidth;
+        _maxDragExtent = _maxSliderWidth * 0.85;
+      });
+    });
   }
 
   @override
@@ -27,35 +47,112 @@ class _SwipeToPayPageState extends State<SwipeToPayPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Enter Amount'),
-              TextField(
-                controller: keyboardText,
-                showCursor: false,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
+              // const Spacer(),
+              if (!isSuccessful)
+                Positioned.fill(
+                  top: 0,
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Column(
+                    children: [
+                      const Text('Enter Amount'),
+                      TextField(
+                        controller: keyboardText,
+                        showCursor: false,
+                        style:
+                            Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
+                      KeypadWidget(
+                        onKeyPressed: (value) {
+                          if (value == 'x') {
+                            keyboardText.text =
+                                keyboardText.text.removeLastChar;
+                          } else if (value == '.') {
+                            keyboardText.text +=
+                                !keyboardText.text.contains('.') ? value : "";
+                          } else {
+                            keyboardText.text += value;
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                top: isSuccessful ? size.height * 0.15 : 0,
+                curve: Curves.easeInOut,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text(
+                    '\u20A620,000',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayLarge
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
-              const Spacer(),
-              _Keypad(
-                onKeyPressed: (value) {
-                  if (value == 'x') {
-                    keyboardText.text = keyboardText.text.removeLastChar;
-                  } else if (value == '.') {
-                    keyboardText.text +=
-                        !keyboardText.text.contains('.') ? value : "";
-                  } else {
-                    keyboardText.text += value;
-                  }
-                },
+
+              const Positioned(
+                top: 0,
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: _AnimatedProgressBar(),
               ),
-              const Spacer(),
-              const PaymentSlider(),
+
+              if (1 == 2)
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 1000),
+                  top: 0,
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Offstage(
+                    offstage: !isSuccessful,
+                    child: Center(
+                      child: AnimatedSlide(
+                        offset: isSuccessful
+                            ? Offset.zero
+                            : const Offset(2.1, 5.49),
+                        duration: const Duration(milliseconds: 1000),
+                        child: AnimatedScale(
+                          duration: const Duration(milliseconds: 1000),
+                          scale: isSuccessful ? 4 : 1,
+                          child: const PaymetIconWidget(isActive: true),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              // const Spacer(),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: PaymentSliderWidget(
+                  key: _sliderKey,
+                  containerHeight: _containerHeight,
+                  maxDragExtent: _maxDragExtent,
+                  maxSliderWidth: _maxSliderWidth,
+                  onComplete: (value) {
+                    setState(() {
+                      isSuccessful = value;
+                    });
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -64,105 +161,30 @@ class _SwipeToPayPageState extends State<SwipeToPayPage> {
   }
 }
 
-class PaymentSlider extends StatefulWidget {
-  const PaymentSlider({
+class _AnimatedProgressBar extends StatefulWidget {
+  const _AnimatedProgressBar({
     super.key,
   });
 
   @override
-  State<PaymentSlider> createState() => _PaymentSliderState();
+  State<_AnimatedProgressBar> createState() => _AnimatedProgressBarState();
 }
 
-class _PaymentSliderState extends State<PaymentSlider> {
-  double _xDragOffet = 0;
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    return Container(
-      height: 70,
-      width: size.width,
-      decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Stack(
-        children: [
-          const Center(
-            child: LoadingAnimation(),
-          ),
-          AnimatedPositioned(
-            top: 0,
-            bottom: 0,
-            left: _xDragOffet,
-            duration: const Duration(milliseconds: 0),
-            child: GestureDetector(
-              onHorizontalDragStart: (details) {
-                _xDragOffet = details.globalPosition.dx;
-                setState(() {});
-              },
-              onHorizontalDragUpdate: (details) {
-                print(details.localPosition.dx);
-                // if (xDragOffet < size.width) {
-                //   xDragOffet = details.globalPosition.dx;
-                // }
-                _xDragOffet = details.globalPosition.dx.clamp(0, 300);
-                setState(() {});
-                print(size.width);
-              },
-              onHorizontalDragEnd: (details) {
-                if (_xDragOffet <= 300 * 0.7) {
-                  _xDragOffet = 0;
-                } else {
-                  _xDragOffet = 300;
-                }
-                setState(() {});
-              },
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 5),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  '₦',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LoadingAnimation extends StatefulWidget {
-  const LoadingAnimation({super.key, this.count = 3});
-
-  final int count;
-
-  @override
-  State<LoadingAnimation> createState() => _LoadingAnimationState();
-}
-
-class _LoadingAnimationState extends State<LoadingAnimation>
+class _AnimatedProgressBarState extends State<_AnimatedProgressBar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      upperBound: 360.radians,
+      duration: const Duration(milliseconds: 10000),
     );
 
     _animationController.forward();
-    _animationController.repeat();
   }
 
   @override
@@ -176,86 +198,52 @@ class _LoadingAnimationState extends State<LoadingAnimation>
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        return Wrap(
-          spacing: 3,
-          children: List.generate(widget.count, (index) {
-            final opacity = CurvedAnimation(
-              parent: _animationController,
-              curve: Interval((index / widget.count), 1.0),
-            );
-            return FadeTransition(
-              opacity: opacity,
-              child: Text(
-                ">",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey,
-                    ),
-              ),
-            );
-          }),
-        );
-      },
-    );
-  }
-}
-
-class _Keypad extends StatelessWidget {
-  const _Keypad({
-    super.key,
-    this.onKeyPressed,
-  });
-
-  final ValueSetter<String>? onKeyPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    const keys = '123456789.0x';
-    return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 20,
-        crossAxisSpacing: 20,
-      ),
-      itemBuilder: (context, index) {
-        final key = keys[index];
-        return ClipRRect(
-          child: Material(
-            type: MaterialType.button,
-            color: Colors.white10,
-            shape: const CircleBorder(),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(60),
-              onTap: () {
-                HapticFeedback.lightImpact();
-                onKeyPressed?.call(key);
-              },
-              child: Align(
-                child: key == 'x'
-                    ? const Icon(Icons.backspace_outlined)
-                    : Text(
-                        key,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-              ),
+        return CustomPaint(
+          painter: CircularProgressPainter(
+            _animationController.value,
+          ),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            opacity: _animationController.status == AnimationStatus.completed
+                ? 1
+                : 0,
+            child: const Icon(
+              Icons.check,
+              size: 70,
+              color: Colors.green,
             ),
           ),
         );
       },
-      itemCount: keys.length,
     );
   }
 }
 
-extension KeypadEx on String {
-  String get removeLastChar => isNotEmpty ? substring(0, length - 1) : "";
+class CircularProgressPainter extends CustomPainter {
+  CircularProgressPainter(this.progress);
+  final double progress;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final innerCirclePaint = Paint()
+      ..color = Colors.green.withOpacity(0.2)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10;
+    final progressCirclePaint = Paint()
+      ..color = Colors.green
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 10;
+    canvas.drawCircle(center, 100, innerCirclePaint);
+    canvas.drawArc(
+      Rect.fromCenter(center: center, width: 200, height: 200),
+      0.radians,
+      progress,
+      false,
+      progressCirclePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(CircularProgressPainter oldDelegate) => true;
 }
