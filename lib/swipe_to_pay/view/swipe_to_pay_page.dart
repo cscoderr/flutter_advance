@@ -1,6 +1,7 @@
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:intl/intl.dart';
 
 class SwipeToPayPage extends StatefulWidget {
   const SwipeToPayPage({super.key});
@@ -100,9 +101,6 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    print((size.height / 2 / 155).ceilToDouble());
-    print((size.width / 2 / 155).ceilToDouble());
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -112,6 +110,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
               animation: Listenable.merge([
                 _animationController,
                 _animationController2,
+                _pinController,
               ]),
               builder: (context, child) {
                 return Column(
@@ -130,13 +129,16 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
   }
 
   Widget _buildMainContent() {
+    final formattedText = NumberFormat.currency(symbol: '', decimalDigits: 0)
+        .format(int.tryParse(_pinController.text) ?? 0)
+        .toString();
     return Column(
       children: [
         if (_hasReachSlideThreshold)
           SlideTransition(
             position: _amountSlideAnimation,
             child: Text(
-              '\u20A6${_pinController.text}',
+              '\u20A6$formattedText',
               style: Theme.of(context)
                   .textTheme
                   .displayLarge

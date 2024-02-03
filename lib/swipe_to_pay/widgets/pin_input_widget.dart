@@ -1,3 +1,4 @@
+import 'package:animation_playground/swipe_to_pay/widgets/animated_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -23,42 +24,32 @@ class PinInputWidget extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              TextField(
-                controller: controller,
-                showCursor: false,
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                ),
+              AnimatedText(
+                text: controller.text,
+                ondelete: () {
+                  controller.text = controller.text.removeLastChar;
+                },
               ),
             ],
           ),
         ),
-        _Keypad(
-          onKeyPressed: (value) {
-            if (value == 'x') {
-              controller.text = controller.text.removeLastChar;
-            } else if (value == '.') {
-              controller.text += !controller.text.contains('.') ? value : "";
-            } else {
-              controller.text += value;
-            }
-          },
+        Keypad(
+          controller: controller,
         ),
       ],
     );
   }
 }
 
-class _Keypad extends StatelessWidget {
-  const _Keypad({
+class Keypad extends StatelessWidget {
+  const Keypad({
     super.key,
     this.onKeyPressed,
+    required this.controller,
   });
 
   final ValueSetter<String>? onKeyPressed;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -73,38 +64,58 @@ class _Keypad extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final key = keys[index];
-        return ClipRRect(
-          child: Material(
-            type: MaterialType.button,
-            color: Colors.white10,
-            shape: const CircleBorder(),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(60),
-              onTap: () {
-                HapticFeedback.lightImpact();
-                onKeyPressed?.call(key);
-              },
-              child: Align(
-                child: key == 'x'
-                    ? const Icon(Icons.backspace_outlined)
-                    : Text(
-                        key,
-                        textAlign: TextAlign.center,
-                        style:
-                            Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                      ),
-              ),
-            ),
-          ),
-        );
+        return key == '.'
+            ? const SizedBox()
+            : ClipRRect(
+                child: Material(
+                  type: MaterialType.button,
+                  color: Colors.white10,
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(60),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      if (key == 'x') {
+                        controller.text = controller.text.contains('x')
+                            ? controller.text
+                            : controller.text.isNotEmpty
+                                ? '${controller.text}x'
+                                : '';
+                      } else if (key == '.') {
+                        controller.text +=
+                            !controller.text.contains('.') ? key : "";
+                      } else {
+                        controller.text += key;
+                      }
+                      onKeyPressed?.call(key);
+                    },
+                    child: Align(child: _buildKeyWidget(context, key)),
+                  ),
+                ),
+              );
       },
       itemCount: keys.length,
+    );
+  }
+
+  Widget _buildKeyWidget(BuildContext context, String key) {
+    if (key == 'x') {
+      return const Icon(Icons.backspace_outlined);
+    }
+
+    if (key == '.') {
+      return const SizedBox();
+    }
+    return Text(
+      key,
+      textAlign: TextAlign.center,
+      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
     );
   }
 }
 
 extension KeypadEx on String {
-  String get removeLastChar => isNotEmpty ? substring(0, length - 1) : "";
+  String get removeLastChar => isNotEmpty ? substring(0, length - 2) : "";
 }

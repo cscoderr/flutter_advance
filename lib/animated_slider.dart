@@ -41,8 +41,10 @@ class SliderTextWidget extends StatelessWidget {
   const SliderTextWidget({
     super.key,
     required this.text,
+    this.hasSign = true,
   });
   final String text;
+  final bool hasSign;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,10 @@ class SliderTextWidget extends StatelessWidget {
       children: [
         Text(
           '\u20A6',
-          style: Theme.of(context).textTheme.displayMedium,
+          style: Theme.of(context)
+              .textTheme
+              .displayMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
         ...List.generate(
           text.length,
@@ -93,10 +98,18 @@ class _SliderTextState extends State<SliderText> {
   void didUpdateWidget(covariant SliderText oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
-      _scrollController.animateTo((_maxScrollHeight * widget.value).toDouble(),
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.elasticOut);
+      _scrollController.animateTo(
+        (_maxScrollHeight * widget.value).toDouble(),
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.elasticOut,
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -110,7 +123,10 @@ class _SliderTextState extends State<SliderText> {
             10,
             (index) => Text(
               '$index',
-              style: Theme.of(context).textTheme.displayMedium,
+              style: Theme.of(context)
+                  .textTheme
+                  .displayMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
         ),
