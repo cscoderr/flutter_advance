@@ -20,10 +20,9 @@ class _LoadingAnimationState extends State<LoadingAnimation>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
-    );
-
-    _animationController.forward();
-    _animationController.repeat();
+    )
+      ..forward()
+      ..repeat();
   }
 
   @override
@@ -43,7 +42,7 @@ class _LoadingAnimationState extends State<LoadingAnimation>
             final opacity = CurvedAnimation(
               parent: _animationController,
               curve: Interval(
-                (index / widget.count),
+                index / widget.count,
                 1.0,
                 curve: Curves.easeInOut,
               ),

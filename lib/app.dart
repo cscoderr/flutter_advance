@@ -1,6 +1,7 @@
 import 'package:animation_playground/animated_card.dart';
 import 'package:animation_playground/animated_lock.dart';
 import 'package:animation_playground/animated_progress_bar.dart';
+import 'package:animation_playground/animated_slider.dart';
 import 'package:animation_playground/blur_animation.dart';
 import 'package:animation_playground/petal_menu.dart';
 import 'package:animation_playground/phone_pattern.dart';
@@ -21,12 +22,11 @@ class App extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         children: [
-          // ListTile(
-          //   leading: const Icon(Iconsax.eye_slash),
-          //   title: const Text('Blur Animation'),
-          //   trailing: const Icon(Iconsax.arrow_right_3),
-          //   onTap: () => Navigator.of(context).push(BlurAnimation.route()),
-          // ),
+          SolidButton(
+            text: "Animated Slider",
+            onPressed: () => Navigator.of(context).push(AnimatedSlider.route()),
+          ),
+          const SizedBox(height: 20),
           SolidButton(
             text: "Swipe to pay",
             onPressed: () => Navigator.of(context).push(SwipeToPayPage.route()),

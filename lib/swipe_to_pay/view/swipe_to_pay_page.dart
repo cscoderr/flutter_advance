@@ -1,4 +1,3 @@
-import 'package:animation_playground/animated_progress_bar.dart';
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -17,16 +16,18 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
     with TickerProviderStateMixin {
   bool isSuccessful = false;
   final _sliderKey = GlobalKey();
+  final _iconKey = GlobalKey();
   double _sliderWidth = 0.0;
   double _maxSliderWidth = 0.0;
-  final double _minSliderWidth = 70;
+  double _minSliderWidth = 0.0;
   final double _containerHeight = 80;
   double _maxDragExtent = 0.0;
   double _xDragOffet = 0.0;
   bool isSliding = false;
+  bool _hasReachSlideThreshold = false;
   bool isProgressCompleted = false;
 
-  late final TextEditingController _keyboardTextController;
+  late final TextEditingController _pinController;
   late final AnimationController _animationController;
   late final AnimationController _animationController2;
   late final Animation<double> _scaleAnimation;
@@ -37,7 +38,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
   @override
   void initState() {
     super.initState();
-    _keyboardTextController = TextEditingController();
+    _pinController = TextEditingController();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -50,7 +51,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _logoSlideAnimation =
-        Tween(begin: Offset.zero, end: const Offset(-2.1, -4.7)).animate(
+        Tween(begin: Offset.zero, end: const Offset(-2.1, -4.5)).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _amountSlideAnimation =
@@ -70,28 +71,28 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
     SchedulerBinding.instance.addPostFrameCallback((_) {
       final renderBox =
           _sliderKey.currentContext?.findRenderObject() as RenderBox?;
+      final iconRenderBox =
+          _iconKey.currentContext?.findRenderObject() as RenderBox?;
       setState(() {
         _sliderWidth = renderBox?.size.width ?? 0.0;
+        _minSliderWidth = iconRenderBox?.size.width ?? 50;
         _maxSliderWidth = _sliderWidth - _minSliderWidth;
         _maxDragExtent = _maxSliderWidth * 0.85;
       });
     });
 
-    _animationController2.addListener(() {
-      setState(() {});
-    });
+    _animationController.addStatusListener(_onStatusChanged);
+  }
 
-    _animationController.addListener(() {
-      if (_animationController.isCompleted) {
-        print("yes forward2");
-        _animationController2.forward();
-      }
-    });
+  void _onStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _animationController2.forward();
+    }
   }
 
   @override
   void dispose() {
-    _keyboardTextController.dispose();
+    _pinController.dispose();
     _animationController.dispose();
     _animationController2.dispose();
     super.dispose();
@@ -99,13 +100,19 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    print((size.height / 2 / 155).ceilToDouble());
+    print((size.width / 2 / 155).ceilToDouble());
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: AnimatedBuilder(
-              animation: _animationController,
+              animation: Listenable.merge([
+                _animationController,
+                _animationController2,
+              ]),
               builder: (context, child) {
                 return Column(
                   children: [
@@ -125,12 +132,11 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
   Widget _buildMainContent() {
     return Column(
       children: [
-        if (_animationController.isAnimating ||
-            _animationController.isCompleted)
+        if (_hasReachSlideThreshold)
           SlideTransition(
             position: _amountSlideAnimation,
             child: Text(
-              '\u20A6${_keyboardTextController.text}',
+              '\u20A6${_pinController.text}',
               style: Theme.of(context)
                   .textTheme
                   .displayLarge
@@ -144,11 +150,11 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
               alignment: Alignment.center,
               children: [
                 Positioned.fill(
-                  child: _AnimatedProgressBar(
+                  child: AnimatedCircularProgressBar(
                     onCompleted: () {
-                      print("called!!!!!!");
-                      isProgressCompleted = true;
-                      setState(() {});
+                      setState(() {
+                        isProgressCompleted = true;
+                      });
                     },
                   ),
                 ),
@@ -165,11 +171,10 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
               ],
             ),
           ),
-        if (!_animationController.isAnimating &&
-            !_animationController.isCompleted)
+        if (!_hasReachSlideThreshold)
           Expanded(
               child: PinInputWidget(
-            controller: _keyboardTextController,
+            controller: _pinController,
           )),
       ],
     );
@@ -223,10 +228,15 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
               },
               onHorizontalDragEnd: (details) {
                 if (_xDragOffet <= _maxDragExtent) {
+                  _hasReachSlideThreshold = false;
                   _xDragOffet = 0;
                 } else {
                   _xDragOffet = _maxSliderWidth;
-                  _animationController.forward();
+                  _hasReachSlideThreshold = true;
+                  Future.delayed(
+                    const Duration(milliseconds: 500),
+                    () => _animationController.forward(),
+                  );
                 }
                 isSliding = false;
                 setState(() {});
@@ -238,6 +248,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
                   child: ScaleTransition(
                     scale: _scaleAnimation,
                     child: PaymetIconWidget(
+                      iconKey: _iconKey,
                       isActive: _xDragOffet == _maxSliderWidth,
                     ),
                   ),
@@ -272,89 +283,4 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
       ),
     );
   }
-}
-
-class _AnimatedProgressBar extends StatefulWidget {
-  const _AnimatedProgressBar({
-    super.key,
-    this.onCompleted,
-  });
-
-  final VoidCallback? onCompleted;
-
-  @override
-  State<_AnimatedProgressBar> createState() => _AnimatedProgressBarState();
-}
-
-class _AnimatedProgressBarState extends State<_AnimatedProgressBar>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      upperBound: 360.radians,
-      duration: const Duration(seconds: 3),
-    );
-
-    _animationController.forward();
-
-    _animationController.addListener(() {
-      if (_animationController.isCompleted) {
-        widget.onCompleted?.call();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        return CustomPaint(
-          painter: CircularProgressPainter(
-            _animationController.value,
-          ),
-        );
-      },
-    );
-  }
-}
-
-class CircularProgressPainter extends CustomPainter {
-  CircularProgressPainter(this.progress);
-  final double progress;
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-    final innerCirclePaint = Paint()
-      ..color = Colors.green.withOpacity(0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 10;
-    final progressCirclePaint = Paint()
-      ..color = Colors.green
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 10;
-    canvas.drawCircle(center, 80, innerCirclePaint);
-    canvas.drawArc(
-      Rect.fromCenter(center: center, width: 160, height: 160),
-      0.radians,
-      progress,
-      false,
-      progressCirclePaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(CircularProgressPainter oldDelegate) => true;
 }
