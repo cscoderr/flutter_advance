@@ -1,7 +1,7 @@
 import 'package:animation_playground/animated_card.dart';
 import 'package:animation_playground/animated_lock.dart';
 import 'package:animation_playground/animated_progress_bar.dart';
-import 'package:animation_playground/animated_slider.dart';
+import 'package:animation_playground/animated_slider/view/animated_slider_page.dart';
 import 'package:animation_playground/blur_animation.dart';
 import 'package:animation_playground/petal_menu.dart';
 import 'package:animation_playground/phone_pattern.dart';
@@ -24,7 +24,8 @@ class App extends StatelessWidget {
         children: [
           SolidButton(
             text: "Animated Slider",
-            onPressed: () => Navigator.of(context).push(AnimatedSlider.route()),
+            onPressed: () =>
+                Navigator.of(context).push(AnimatedSliderPage.route()),
           ),
           const SizedBox(height: 20),
           SolidButton(

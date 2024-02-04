@@ -1,6 +1,8 @@
+import 'package:animation_playground/animated_slider/animated_slider.dart';
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 class SwipeToPayPage extends StatefulWidget {
@@ -27,19 +29,22 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
   bool isSliding = false;
   bool _hasReachSlideThreshold = false;
   bool isProgressCompleted = false;
+  double _amountsliderValue = 0;
+  int _currentTab = 0;
 
-  late final TextEditingController _pinController;
+  late final TextEditingController _amountController;
   late final AnimationController _animationController;
   late final AnimationController _animationController2;
   late final Animation<double> _scaleAnimation;
   late final Animation<Offset> _logoSlideAnimation;
   late final Animation<Offset> _amountSlideAnimation;
+  late final Animation<Offset> _sliderAmountSlideAnimation;
   late final Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _pinController = TextEditingController();
+    _amountController = TextEditingController();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -57,6 +62,10 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
     );
     _amountSlideAnimation =
         Tween(begin: Offset.zero, end: const Offset(0, 2)).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+    _sliderAmountSlideAnimation =
+        Tween(begin: Offset.zero, end: const Offset(0, -3)).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _fadeAnimation = Tween(begin: 1.0, end: 0.0).animate(
@@ -93,7 +102,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
 
   @override
   void dispose() {
-    _pinController.dispose();
+    _amountController.dispose();
     _animationController.dispose();
     _animationController2.dispose();
     super.dispose();
@@ -105,16 +114,18 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: AnimatedBuilder(
               animation: Listenable.merge([
                 _animationController,
                 _animationController2,
-                _pinController,
+                _amountController,
               ]),
               builder: (context, child) {
                 return Column(
                   children: [
+                    _buildSegmentedButton(),
+                    const SizedBox(height: 20),
                     Expanded(
                       child: _buildMainContent(),
                     ),
@@ -128,26 +139,51 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
     );
   }
 
-  Widget _buildMainContent() {
-    final formattedText = NumberFormat.currency(symbol: '', decimalDigits: 0)
-        .format(int.tryParse(_pinController.text) ?? 0)
-        .toString();
-    return Column(
-      children: [
-        if (_hasReachSlideThreshold)
-          SlideTransition(
-            position: _amountSlideAnimation,
-            child: Text(
-              '\u20A6$formattedText',
-              style: Theme.of(context)
-                  .textTheme
-                  .displayLarge
-                  ?.copyWith(fontWeight: FontWeight.w700),
+  Widget _buildSegmentedButton() {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: !_hasReachSlideThreshold ? 1 : 0,
+      child: Align(
+        alignment: Alignment.center,
+        child: SegmentedButton(
+          segments: const [
+            ButtonSegment(
+              value: 0,
+              label: Text('Keypad'),
+              icon: Icon(Iconsax.keyboard),
             ),
-          ),
+            ButtonSegment(
+              value: 1,
+              label: Text('Slider'),
+              icon: Icon(Iconsax.slider),
+            ),
+          ],
+          showSelectedIcon: false,
+          selected: {_currentTab},
+          onSelectionChanged: (value) {
+            _amountController.clear();
+            setState(() {
+              _currentTab = value.first;
+              _amountsliderValue = 0;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return Stack(
+      children: [
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _currentTab == 0
+              ? _buildKeypadContent()
+              : _buildAnimatedSliderContent(),
+        ),
         if (_animationController.isCompleted &&
             _animationController2.isCompleted)
-          Expanded(
+          Positioned.fill(
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -173,10 +209,60 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
               ],
             ),
           ),
+      ],
+    );
+  }
+
+  Widget _buildAnimatedSliderContent() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SlideTransition(
+            position: _sliderAmountSlideAnimation,
+            child: SliderTextWidget(
+              text: _amountsliderValue.toInt().toString(),
+            ),
+          ),
+          if (!_hasReachSlideThreshold) ...[
+            const SizedBox(height: 30),
+            Slider(
+              value: _amountsliderValue,
+              max: 100000,
+              onChanged: (value) {
+                setState(() {
+                  _amountsliderValue = value;
+                  _amountController.text = value.toString();
+                });
+              },
+            ),
+          ]
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKeypadContent() {
+    final formattedText = NumberFormat.currency(symbol: '', decimalDigits: 0)
+        .format(int.tryParse(_amountController.text) ?? 0)
+        .toString();
+    return Column(
+      children: [
+        if (_hasReachSlideThreshold)
+          SlideTransition(
+            position: _amountSlideAnimation,
+            child: Text(
+              '\u20A6$formattedText',
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge
+                  ?.copyWith(fontWeight: FontWeight.w700),
+            ),
+          ),
         if (!_hasReachSlideThreshold)
           Expanded(
               child: PinInputWidget(
-            controller: _pinController,
+            controller: _amountController,
           )),
       ],
     );

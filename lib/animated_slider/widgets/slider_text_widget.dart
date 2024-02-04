@@ -1,42 +1,5 @@
 import 'package:flutter/material.dart';
 
-class AnimatedSlider extends StatefulWidget {
-  const AnimatedSlider({super.key});
-  static PageRoute route() =>
-      MaterialPageRoute(builder: (_) => const AnimatedSlider());
-
-  @override
-  State<AnimatedSlider> createState() => _AnimatedSliderState();
-}
-
-class _AnimatedSliderState extends State<AnimatedSlider> {
-  double sliderValue = 100;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SliderTextWidget(
-              text: sliderValue.toInt().toString(),
-            ),
-            const SizedBox(height: 30),
-            Slider(
-                value: sliderValue,
-                max: 4500,
-                onChanged: (value) {
-                  setState(() {
-                    sliderValue = value;
-                  });
-                }),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class SliderTextWidget extends StatelessWidget {
   const SliderTextWidget({
     super.key,
@@ -61,7 +24,7 @@ class SliderTextWidget extends StatelessWidget {
         ...List.generate(
           text.length,
           (index) => SliderText(
-            value: int.parse(text[index]),
+            value: int.tryParse(text[index]) ?? 0,
           ),
         )
       ],
