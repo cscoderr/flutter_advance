@@ -1,7 +1,6 @@
 import 'package:animation_playground/animated_slider/animated_slider.dart';
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
@@ -57,7 +56,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _logoSlideAnimation =
-        Tween(begin: Offset.zero, end: const Offset(-2.1, -4.5)).animate(
+        Tween(begin: Offset.zero, end: const Offset(-2.5, -4.5)).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
     _amountSlideAnimation =
@@ -78,7 +77,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
         ),
       ),
     );
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final renderBox =
           _sliderKey.currentContext?.findRenderObject() as RenderBox?;
       final iconRenderBox =

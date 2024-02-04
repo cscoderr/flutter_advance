@@ -4,6 +4,14 @@ You can see the animations on my [Twitter Profile](https://twitter.com/CsCoder_)
 
 Feel free to star, fork and contribute.
 
+### Animated Slider || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/animated_slider/view/animated_slider_page.dart)
+
+<img src="gifs/animated_slider.gif" width="50%" vspace="10" hspace="10"/>
+
+### Swipe to pay || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/swipe_to_pay/view/swipe_to_pay.dart)
+
+<img src="gifs/slide_to_pay.gif" width="50%" vspace="10" hspace="10"/>
+
 ### Blur Animation || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/blur_animation.dart)
 
 <img src="gifs/blur_animation.gif" width="50%" vspace="10" hspace="10"/>
