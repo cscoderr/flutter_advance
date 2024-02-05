@@ -225,7 +225,7 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
           ),
           if (!_hasReachSlideThreshold) ...[
             const SizedBox(height: 30),
-            Slider(
+            Slider.adaptive(
               value: _amountsliderValue,
               max: 100000,
               onChanged: (value) {
