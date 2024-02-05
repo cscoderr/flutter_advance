@@ -85,7 +85,8 @@ class _AnimatedCharState extends State<AnimatedChar>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 150),
     );
     _slideAnimation =
         Tween(begin: const Offset(0, 0.5), end: Offset.zero).animate(

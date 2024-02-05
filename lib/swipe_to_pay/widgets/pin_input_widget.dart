@@ -71,8 +71,8 @@ class Keypad extends StatelessWidget {
                   type: MaterialType.button,
                   color: Colors.white10,
                   shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(60),
                     onTap: () {
                       HapticFeedback.lightImpact();
                       if (key == 'x') {
