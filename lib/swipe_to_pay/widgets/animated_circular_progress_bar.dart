@@ -87,5 +87,6 @@ class CircularProgressPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CircularProgressPainter oldDelegate) => true;
+  bool shouldRepaint(CircularProgressPainter oldDelegate) =>
+      progress != oldDelegate.progress;
 }
