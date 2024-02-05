@@ -117,10 +117,8 @@ class _AnimatedCharState extends State<AnimatedChar>
     final charToDeleteIndex = widget.text.indexOf(lastChar) - 1;
     if (lastChar == widget.deleteCharacter &&
         widget.index == charToDeleteIndex) {
-      _animationController.reverse();
-      Future.delayed(_animationController.duration!, () {
-        SchedulerBinding.instance.addPostFrameCallback(_ondelete);
-      });
+      _animationController.reverse().whenComplete(
+          () => SchedulerBinding.instance.addPostFrameCallback(_ondelete));
     }
   }
 
