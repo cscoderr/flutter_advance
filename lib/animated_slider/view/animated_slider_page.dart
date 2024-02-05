@@ -23,7 +23,7 @@ class _AnimatedSliderPageState extends State<AnimatedSliderPage> {
               text: sliderValue.toInt().toString(),
             ),
             const SizedBox(height: 30),
-            Slider(
+            Slider.adaptive(
               value: sliderValue,
               max: 4500,
               onChanged: (value) {
