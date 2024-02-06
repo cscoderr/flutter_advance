@@ -32,7 +32,7 @@ class AnimatedText extends StatelessWidget {
       if (_formatText[i] == ',') continue;
       mainIndex++;
     }
-    return '${_formatText[index]}$mainIndex';
+    return '$mainIndex${_formatText[index]}';
   }
 
   @override
@@ -85,7 +85,7 @@ class _AnimatedCharState extends State<AnimatedChar>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
       reverseDuration: const Duration(milliseconds: 150),
     );
     _slideAnimation =
@@ -147,9 +147,4 @@ class _AnimatedCharState extends State<AnimatedChar>
       },
     );
   }
-}
-
-enum AnimationType {
-  slideOut,
-  slideIn,
 }
