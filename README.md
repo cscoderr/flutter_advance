@@ -8,7 +8,7 @@ Feel free to star, fork and contribute.
 
 <img src="gifs/animated_slider.gif" width="50%" vspace="10" hspace="10"/>
 
-### Swipe to pay || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/swipe_to_pay/view/swipe_to_pay_page.dart) [Youtube Tutorial](https://www.youtube.com/watch?v=H8tUY9F0mwE)
+### Swipe to pay || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/swipe_to_pay/view/swipe_to_pay_page.dart) || [Youtube Tutorial](https://youtu.be/H8tUY9F0mwE)
 
 <img src="gifs/slide_to_pay.gif" width="50%" vspace="10" hspace="10"/>
 
@@ -24,7 +24,7 @@ Feel free to star, fork and contribute.
 
 <img src="gifs/rainbow_sticks_animation.gif" width="50%" vspace="10" hspace="10"/>
 
-### Telegram Theme Switcher || [Link to code](https://github.com/cscoderr/telegram_theme_switcher_animation)
+### Telegram Theme Switcher || [Link to code](https://github.com/cscoderr/telegram_theme_switcher_animation) || [Youtube Tutorial](https://youtu.be/6lkAo-_-IME)
 
 <img src="gifs/telegram_theme_switcher.gif" width="50%" vspace="10" hspace="10"/>
 
