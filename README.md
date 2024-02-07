@@ -20,11 +20,11 @@ Feel free to star, fork and contribute.
 
 <img src="gifs/petal_menu.gif" width="50%" vspace="10" hspace="10"/>
 
-### Rainbow Sticks Animation || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/rainbow_sticks_page.dart)
+### Rainbow Sticks Animation || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/rainbow_sticks_page.dart) || [Youtube Tutorial](https://youtu.be/6lkAo-_-IME)
 
 <img src="gifs/rainbow_sticks_animation.gif" width="50%" vspace="10" hspace="10"/>
 
-### Telegram Theme Switcher || [Link to code](https://github.com/cscoderr/telegram_theme_switcher_animation) || [Youtube Tutorial](https://youtu.be/6lkAo-_-IME)
+### Telegram Theme Switcher || [Link to code](https://github.com/cscoderr/telegram_theme_switcher_animation)
 
 <img src="gifs/telegram_theme_switcher.gif" width="50%" vspace="10" hspace="10"/>
 
