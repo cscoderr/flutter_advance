@@ -147,7 +147,7 @@ class _TextShimmerState extends State<TextShimmer> {
   void initState() {
     super.initState();
     double startValue = (widget.index / widget.length) * 0.5;
-    double endValue = math.min(startValue + 0.25, 1.0);
+    double endValue = math.min(startValue + 0.2, 1.0);
     _scaleAnimation = TweenSequence([
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.25)

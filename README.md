@@ -4,6 +4,10 @@ You can see the animations on my [Twitter Profile](https://twitter.com/CsCoder_)
 
 Feel free to star, fork and contribute.
 
+### Text Shimmer Wave || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/text_shimmer_wave.dart)
+
+<img src="gifs/text_shimmer_wave.gif" width="50%" vspace="10" hspace="10"/>
+
 ### Animated Slider || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/animated_slider/view/animated_slider_page.dart) || [Youtube Tutorial](https://youtu.be/H8tUY9F0mwE)
 
 <img src="gifs/animated_slider.gif" width="50%" vspace="10" hspace="10"/>
