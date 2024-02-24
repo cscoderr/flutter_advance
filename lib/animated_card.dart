@@ -17,7 +17,7 @@ class _AnimatedCardPageState extends State<AnimatedCardPage>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
-  bool _isActive = false;
+  final bool _isActive = false;
 
   @override
   void initState() {
@@ -44,16 +44,16 @@ class _AnimatedCardPageState extends State<AnimatedCardPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 20,
           ),
           child: Column(
-            children: const [
+            children: [
               AnimatedCard(
                 activeColor: Color.fromRGBO(14, 165, 233, 1.0),
                 inactiveColor: Color.fromRGBO(56, 189, 248, 1.0),

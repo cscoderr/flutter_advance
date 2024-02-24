@@ -23,9 +23,6 @@ class _RainbowSticksPageState extends State<RainbowSticksPage>
       upperBound: 0.6,
       duration: const Duration(seconds: 2),
     );
-    _animationController.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -55,7 +52,8 @@ class _RainbowSticksPageState extends State<RainbowSticksPage>
 class _CiclePainter extends CustomPainter {
   _CiclePainter({
     required AnimationController animationController,
-  }) : _animationController = animationController;
+  })  : _animationController = animationController,
+        super(repaint: animationController);
   final AnimationController _animationController;
 
   @override

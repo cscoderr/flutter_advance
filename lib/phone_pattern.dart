@@ -33,7 +33,6 @@ class _HomePageState extends State<PhonePatternPage> {
               final distance = (circlePosition - position).distance;
 
               if (distance < 40 && !selectedCirclesIndexes.contains(i)) {
-                print(distance);
                 setState(() {
                   selectedCirclesIndexes.add(i);
                 });
@@ -146,7 +145,9 @@ class PatternPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(PatternPainter oldDelegate) =>
+      oldDelegate.currentOffset != currentOffset ||
+      oldDelegate.selectedCirclesIndexes != selectedCirclesIndexes;
 }
 
 Offset getCurrentCirclePosition(Size frameSize, double dimension, int i) {
