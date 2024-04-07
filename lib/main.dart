@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Advance',
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       home: const App(),
     );
   }

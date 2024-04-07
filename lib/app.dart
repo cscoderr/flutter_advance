@@ -5,7 +5,7 @@ import 'package:animation_playground/animated_slider/view/animated_slider_page.d
 import 'package:animation_playground/blur_animation.dart';
 import 'package:animation_playground/petal_menu.dart';
 import 'package:animation_playground/phone_pattern.dart';
-import 'package:animation_playground/photo_extractor.dart';
+import 'package:animation_playground/photo_extractor/photo_extractor.dart';
 import 'package:animation_playground/rainbow_sticks_page.dart';
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:animation_playground/text_shimmer_wave.dart';
