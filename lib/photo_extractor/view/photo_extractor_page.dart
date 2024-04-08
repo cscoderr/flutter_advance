@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
 
 class PhotoExtractor extends StatefulWidget {
   const PhotoExtractor({super.key});
@@ -19,25 +20,33 @@ class PhotoExtractor extends StatefulWidget {
 
 class _PhotoExtractorState extends State<PhotoExtractor>
     with TickerProviderStateMixin {
+  late AnimationController _springAnimationController;
   late AnimationController _animationController;
-  late AnimationController _animationController2;
-  late Animation<double> _animation;
-  late Animation<double> _heightAnimation;
-  bool isDestroy = false;
-  bool show = true;
-  bool isDestroying = false;
-  bool hasExtract = false;
-  bool showMid = false;
-  List<Widget> stripes = [];
-  ui.Image? _image;
+  late AnimationController _verticesAnimationController;
+
+  late Animation<double> _midHeightAnimation;
+  late Animation<double> _fullHeightAnimation;
   late AudioPlayer player;
+
+  ui.Image? _image;
+
+  //Flags
+  bool isDestroy = false;
+  bool performSlideAnimation = false;
+  bool showGradientOverlay = false;
+
+  //
+  late double _imageHeight;
+  late double _imageWidth;
+
+  //Constants
   final _innerLineHeight = 10.0;
   final _outerLineHeight = 24.0;
   final _numberOfStripe = 10;
-  late double _imageHeight;
-  late double _imageWidth;
   double _clipHeight = 0;
   final int _extraSize = 70;
+  final int _minExtraSize = 30;
+  final String _imagePath = Assets.images.img3.path;
 
   @override
   void initState() {
@@ -45,103 +54,82 @@ class _PhotoExtractorState extends State<PhotoExtractor>
 
     player = AudioPlayer();
 
-    _animationController = AnimationController(
+    _springAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
       upperBound: 1.1,
     );
 
-    _animationController2 = AnimationController(
+    _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // MediaQuery.sizeOf(context).height * 0.47
+    _verticesAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
 
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadImage();
       _imageWidth = MediaQuery.sizeOf(context).width * 0.82;
       _imageHeight = _imageWidth;
 
-      _clipHeight = _outerLineHeight / 2 + _imageHeight + _extraSize + 30;
-      _heightAnimation = Tween(begin: 0.0, end: _imageHeight + _extraSize)
-          .animate(_animationController);
+      _clipHeight =
+          _outerLineHeight / 2 + _imageHeight + _extraSize + _minExtraSize;
+      _midHeightAnimation = Tween(begin: 0.0, end: _imageHeight + _extraSize)
+          .animate(_springAnimationController);
     });
-
-    _loadImage();
   }
 
   @override
   void dispose() {
+    _springAnimationController.dispose();
     _animationController.dispose();
-    _animationController2.dispose();
+    _verticesAnimationController.dispose();
     player.dispose();
     super.dispose();
   }
 
-  Future<void> _loadImage() async {
-    final bytes = await rootBundle.load(Assets.images.img3.path);
-    final codec = await ui.instantiateImageCodec(
-      bytes.buffer.asUint8List(),
-      targetWidth: _imageWidth.round(),
-      targetHeight: _imageHeight.round(),
-    );
-    final frame = await codec.getNextFrame();
-
-    setState(() {
-      _image = frame.image;
-      _animation =
-          Tween(begin: 0.0, end: MediaQuery.sizeOf(context).height).animate(
-        CurvedAnimation(
-          parent: _animationController2,
-          curve: Curves.easeInOut,
-        ),
-      );
-    });
-  }
-
   void _handleDestroy() {
     setState(() {
-      isDestroy = !isDestroy;
+      isDestroy = true;
     });
 
     Future.delayed(const Duration(milliseconds: 2000), () {
       _playExtractorSound();
+      _verticesAnimationController.forward();
 
-      setState(() {
-        isDestroying = true;
-      });
-      _animationController2.forward().then((value) {
+      _animationController.forward().then((value) {
         setState(() {
+          performSlideAnimation = true;
           isDestroy = false;
-          showMid = false;
-          hasExtract = false;
-          isDestroying = false;
-          show = false;
         });
         Future.delayed(Durations.extralong4, () {
+          _resetAnimation();
           setState(() {
-            show = true;
+            performSlideAnimation = false;
           });
-          _animationController.reset();
-          _animationController2.reset();
         });
       });
     });
   }
 
-  void _playPaperSound() {
-    player.play(AssetSource('sounds/Papersound.mp3'));
+  void _resetAnimation() {
+    _springAnimationController.reset();
+    _animationController.reset();
+    _verticesAnimationController.reset();
   }
 
-  void _playStampSound() {
-    player.play(AssetSource('sounds/Stampsound.mp3'));
-  }
-
-  void _playExtractorSound() {
-    player.play(AssetSource('sounds/PhotoExtractor.mp3'));
-  }
-
+  //Hanle the image extract
   void _handleExtract() {
+    _playPaperSound();
+
+    //Update the linear gradient overlay to false
+    setState(() {
+      showGradientOverlay = true;
+    });
+
     const springDescription = SpringDescription(
       mass: 0.7,
       stiffness: 200.0,
@@ -149,29 +137,32 @@ class _PhotoExtractorState extends State<PhotoExtractor>
     );
     final simulation = SpringSimulation(
       springDescription,
-      _animationController.value,
+      _springAnimationController.value,
       0.3,
-      _animationController.velocity,
+      _springAnimationController.velocity,
     );
-    _animationController.animateWith(simulation);
+    _springAnimationController.animateWith(simulation);
+
+    //Wait from 1 seconds before sliding the full image out
     Future.delayed(Durations.extralong4, () {
       _playStampSound();
+
+      //Update the linear gradient overlay to false
+      setState(() {
+        showGradientOverlay = false;
+      });
       const springDescription = SpringDescription(
         mass: 0.8,
         stiffness: 180.0,
         damping: 20.0,
       );
-      final simulation = SpringSimulation(springDescription,
-          _animationController.value, 1, _animationController.velocity);
-      _animationController.animateWith(simulation);
-      setState(() {
-        hasExtract = true;
-      });
-    });
-
-    _playPaperSound();
-    setState(() {
-      showMid = true;
+      final simulation = SpringSimulation(
+        springDescription,
+        _springAnimationController.value,
+        1.0,
+        _springAnimationController.velocity,
+      );
+      _springAnimationController.animateWith(simulation);
     });
   }
 
@@ -196,43 +187,20 @@ class _PhotoExtractorState extends State<PhotoExtractor>
                           _imageHeight,
                         );
                         final stripeWidth = _imageWidth / _numberOfStripe;
-                        final maxHeight =
-                            _outerLineHeight / 2 + _imageHeight + 70 + 30;
+
                         return Stack(
                           children: [
                             _buildStripeImages(
-                              rect: rect,
-                              stripeWidth: stripeWidth,
-                              imageHeight: _imageHeight,
-                            ),
+                                rect: rect, stripeWidth: stripeWidth),
                             _buildOuterLine(),
                             _buildInnerLine(),
-                            _buildMainImage(rect: rect, imageHeight: maxHeight),
-                            if (showMid && !hasExtract)
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 500),
-                                top: 12,
-                                left: 25,
-                                right: 25,
-                                child: Container(
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.black.withOpacity(0.5),
-                                        Colors.transparent,
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            _buildMainImage(rect: rect),
+                            _buildGradientOverlay(),
                           ],
                         );
                       }(),
               ),
-              _buildExtractAndDestroyButtons(),
+              _buildExtractAndDestroyButton(),
             ],
           ),
         ),
@@ -240,19 +208,61 @@ class _PhotoExtractorState extends State<PhotoExtractor>
     );
   }
 
-  Widget _buildExtractAndDestroyButtons() {
+  Widget _buildExtractAndDestroyButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ElevatedButton(
-          onPressed: isDestroy ? null : _handleExtract,
-          child: const Text('Extract'),
+        ElevatedButton.icon(
+          onPressed:
+              _springAnimationController.status == AnimationStatus.forward ||
+                      _animationController.status == AnimationStatus.forward ||
+                      isDestroy
+                  ? () {}
+                  : _handleExtract,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF650A31),
+            foregroundColor: Colors.white,
+            textStyle: Theme.of(context).textTheme.bodyLarge,
+          ),
+          icon: const Icon(Iconsax.export),
+          label: const Text('Extract'),
         ),
-        ElevatedButton(
-          onPressed: _handleDestroy,
-          child: const Text('Destroy'),
+        ElevatedButton.icon(
+          onPressed: isDestroy ? () {} : _handleDestroy,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF650A31),
+            foregroundColor: Colors.white,
+            textStyle: Theme.of(context).textTheme.bodyLarge,
+          ),
+          icon: const Icon(Iconsax.trash),
+          label: const Text('Destroy'),
         )
       ],
+    );
+  }
+
+  Widget _buildGradientOverlay() {
+    return Positioned(
+      top: 12,
+      left: 25,
+      right: 25,
+      child: AnimatedOpacity(
+        opacity: showGradientOverlay ? 1 : 0,
+        duration: const Duration(milliseconds: 300),
+        child: Container(
+          height: 30,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withOpacity(0.5),
+                Colors.transparent,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -291,46 +301,86 @@ class _PhotoExtractorState extends State<PhotoExtractor>
 
   Widget _buildMainImage({
     required Rect rect,
-    required double imageHeight,
   }) {
+    final height =
+        _outerLineHeight / 2 + _imageHeight + _extraSize + _minExtraSize;
     return Positioned(
       top: _outerLineHeight / 2,
       left: 0,
       right: 0,
-      height: imageHeight,
+      height: height,
       child: AnimatedSlide(
         duration: const Duration(milliseconds: 700),
-        offset: Offset(0, show ? 0 : -1),
+        offset: Offset(0, performSlideAnimation ? -1 : 0),
         child: MainImageStack(
           rect: rect,
           innerLineHeight: _innerLineHeight,
           image: _image!,
-          heightAnimation: _heightAnimation,
-          heightAnimation2: _animation,
+          midHeightAnimation: _midHeightAnimation,
+          fullHeightAnimation: _fullHeightAnimation,
+          imagePath: _imagePath,
         ),
       ),
     );
   }
 
-  Widget _buildStripeImages(
-      {required Rect rect,
-      required double stripeWidth,
-      required double imageHeight}) {
-    return Positioned.fromRect(
-      rect: rect,
+  Widget _buildStripeImages({required Rect rect, required double stripeWidth}) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_midHeightAnimation, _fullHeightAnimation]),
+      builder: (context, child) {
+        return Positioned.fromRect(
+          rect: rect,
+          child: Transform.translate(
+            offset: Offset(
+                0, _midHeightAnimation.value + _fullHeightAnimation.value + 20),
+            child: child,
+          ),
+        );
+      },
       child: RepaintBoundary(
         child: CustomPaint(
           painter: StripePainter(
             _image!,
-            _animationController2,
-            _heightAnimation,
-            _animation,
+            _verticesAnimationController,
             numberOfStripe: _numberOfStripe,
             stripeWidth: stripeWidth,
-            imageHeight: imageHeight,
+            imageHeight: _imageHeight,
           ),
         ),
       ),
     );
+  }
+
+  void _playPaperSound() {
+    player.play(AssetSource('sounds/Papersound.mp3'));
+  }
+
+  void _playStampSound() {
+    player.play(AssetSource('sounds/Stampsound.mp3'));
+  }
+
+  void _playExtractorSound() {
+    player.play(AssetSource('sounds/PhotoExtractor.mp3'));
+  }
+
+  Future<void> _loadImage() async {
+    final bytes = await rootBundle.load(_imagePath);
+    final codec = await ui.instantiateImageCodec(
+      bytes.buffer.asUint8List(),
+      targetWidth: _imageWidth.round(),
+      targetHeight: _imageHeight.round(),
+    );
+    final frame = await codec.getNextFrame();
+
+    setState(() {
+      _image = frame.image;
+      _fullHeightAnimation =
+          Tween(begin: 0.0, end: MediaQuery.sizeOf(context).height).animate(
+        CurvedAnimation(
+          parent: _animationController,
+          curve: Curves.easeInOut,
+        ),
+      );
+    });
   }
 }

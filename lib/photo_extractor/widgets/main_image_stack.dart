@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 
-import 'package:animation_playground/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 class MainImageStack extends StatelessWidget {
@@ -9,20 +8,22 @@ class MainImageStack extends StatelessWidget {
     required this.rect,
     required this.innerLineHeight,
     required this.image,
-    required this.heightAnimation,
-    required this.heightAnimation2,
+    required this.midHeightAnimation,
+    required this.fullHeightAnimation,
+    required this.imagePath,
   });
 
   final Rect rect;
   final double innerLineHeight;
   final ui.Image image;
-  final Animation heightAnimation;
-  final Animation heightAnimation2;
+  final Animation midHeightAnimation;
+  final Animation fullHeightAnimation;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([heightAnimation, heightAnimation2]),
+      animation: Listenable.merge([midHeightAnimation, fullHeightAnimation]),
       builder: (context, child) {
         return Stack(
           children: [
@@ -30,8 +31,8 @@ class MainImageStack extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               rect: rect,
               child: Transform.translate(
-                offset:
-                    Offset(0, heightAnimation.value + heightAnimation2.value),
+                offset: Offset(
+                    0, midHeightAnimation.value + fullHeightAnimation.value),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -48,7 +49,8 @@ class MainImageStack extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Assets.images.img3.image(
+                  child: Image.asset(
+                    imagePath,
                     fit: BoxFit.cover,
                   ),
                 ),

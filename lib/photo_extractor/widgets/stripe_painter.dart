@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, deprecated_member_use
 
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -9,25 +10,19 @@ import 'package:vector_math/vector_math.dart' as vector;
 class StripePainter extends CustomPainter {
   final ui.Image image;
   final AnimationController animationController;
-  final Animation<double> heightAnimation;
-  final Animation<double> heightAnimation2;
   final double stripeWidth;
   final int numberOfStripe;
   final double imageHeight;
 
   StripePainter(
     this.image,
-    this.animationController,
-    this.heightAnimation,
-    this.heightAnimation2, {
+    this.animationController, {
     required this.stripeWidth,
     required this.numberOfStripe,
     required this.imageHeight,
   }) : super(
           repaint: Listenable.merge([
             animationController,
-            heightAnimation,
-            heightAnimation2,
           ]),
         );
 
@@ -53,7 +48,7 @@ class StripePainter extends CustomPainter {
         imageHeight - offsetYExtra,
       );
       final (vertices, textures, indices) =
-          triangulationAlgo(rect, 20, i / numberOfStripe);
+          generateTrianglePoints(rect, 20, i / numberOfStripe);
 
       final animatedVertices = calculateAnimatedVertices(
         vertices,
@@ -61,8 +56,7 @@ class StripePainter extends CustomPainter {
       );
 
       canvas.save();
-      canvas.translate(
-          5, heightAnimation.value + heightAnimation2.value + offsetYExtra);
+      canvas.translate(5, 0);
       canvas.drawVertices(
         ui.Vertices(
           VertexMode.triangles,
@@ -80,8 +74,6 @@ class StripePainter extends CustomPainter {
   @override
   bool shouldRepaint(StripePainter oldDelegate) =>
       animationController.value != oldDelegate.animationController.value ||
-      heightAnimation.value != oldDelegate.heightAnimation.value ||
-      heightAnimation2.value != oldDelegate.heightAnimation2.value ||
       image != oldDelegate.image ||
       stripeWidth != oldDelegate.stripeWidth ||
       numberOfStripe != oldDelegate.numberOfStripe ||
@@ -92,14 +84,14 @@ class StripePainter extends CustomPainter {
     final noise = vector.SimplexNoise();
     final animatedVertices = vertices.map((v) {
       final d = (-1 * animationValue * 8) *
-          noise.noise2D(heightAnimation.value * 0.0004 * 2,
+          noise.noise2D(Random().nextInt(10000) * 0.0004 * 2,
               vertices.indexOf(v).toDouble());
       return Offset(v.dx + d, v.dy + d);
     }).toList();
     return animatedVertices;
   }
 
-  (List<Offset>, List<Offset>, List<int>) triangulationAlgo(
+  (List<Offset>, List<Offset>, List<int>) generateTrianglePoints(
     Rect rect,
     int totalTriangle,
     double z,
