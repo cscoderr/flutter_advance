@@ -43,10 +43,10 @@ class _PhotoExtractorState extends State<PhotoExtractor>
   final _innerLineHeight = 10.0;
   final _outerLineHeight = 24.0;
   final _numberOfStripe = 10;
-  double _clipHeight = 0;
+  double _clippedHeight = 0;
   final int _extraSize = 70;
   final int _minExtraSize = 30;
-  final String _imagePath = Assets.images.img3.path;
+  final String _imagePath = Assets.images.img4.path;
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _PhotoExtractorState extends State<PhotoExtractor>
       _imageWidth = MediaQuery.sizeOf(context).width * 0.82;
       _imageHeight = _imageWidth;
 
-      _clipHeight =
+      _clippedHeight =
           _outerLineHeight / 2 + _imageHeight + _extraSize + _minExtraSize;
       _midHeightAnimation = Tween(begin: 0.0, end: _imageHeight + _extraSize)
           .animate(_springAnimationController);
@@ -172,14 +172,14 @@ class _PhotoExtractorState extends State<PhotoExtractor>
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              Expanded(
-                child: _image == null
-                    ? const SizedBox.shrink()
-                    : () {
+        child: _image == null
+            ? const SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: () {
                         final rect = Rect.fromLTWH(
                           (size.width - 20 - _imageWidth) / 2,
                           _outerLineHeight / 2 - _imageHeight,
@@ -199,11 +199,11 @@ class _PhotoExtractorState extends State<PhotoExtractor>
                           ],
                         );
                       }(),
+                    ),
+                    _buildExtractAndDestroyButton(),
+                  ],
+                ),
               ),
-              _buildExtractAndDestroyButton(),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -269,7 +269,7 @@ class _PhotoExtractorState extends State<PhotoExtractor>
   Widget _buildOuterLine() {
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
-      top: isDestroy ? _clipHeight : 0,
+      top: isDestroy ? _clippedHeight : 0,
       left: 0,
       right: 0,
       height: _outerLineHeight,
@@ -286,7 +286,7 @@ class _PhotoExtractorState extends State<PhotoExtractor>
     final topSpacing = (_outerLineHeight - _innerLineHeight) / 2;
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
-      top: isDestroy ? _clipHeight + topSpacing : topSpacing,
+      top: isDestroy ? _clippedHeight + topSpacing : topSpacing,
       left: 10,
       right: 10,
       height: _innerLineHeight,
