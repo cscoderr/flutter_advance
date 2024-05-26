@@ -124,9 +124,8 @@ class ThanosSnapEffect extends StatefulWidget {
 class _ThanosSnapEffectState extends State<ThanosSnapEffect>
     with SingleTickerProviderStateMixin {
   final _widgetAsImageKey = GlobalKey();
-  final _particlesList = List<Uint8List>.empty(growable: true);
+  final _imageDataList = List<Uint8List>.empty(growable: true);
   late AnimationController _animationController;
-  final _particleSize = 25;
 
   @override
   void initState() {
@@ -154,57 +153,7 @@ class _ThanosSnapEffectState extends State<ThanosSnapEffect>
       onTap: _handleSnapEffect,
       child: Stack(
         children: [
-          ..._particlesList.map((e) {
-            final index = _particlesList.indexOf(e);
-            final beginInterval = (index / _particlesList.length) * 0.6;
-            final endInterval = math.max(beginInterval * 0.3, 1).toDouble();
-            final endOffset = toPolar(
-                MediaQuery.sizeOf(context).center(Offset.zero),
-                index,
-                _particlesList.length,
-                100);
-            final transformAnimation = Tween<Offset>(
-              begin: Offset.zero,
-              end: Offset(
-                  endOffset.dx.toInt().isEven
-                      ? endOffset.dx / 2
-                      : -endOffset.dx / 2,
-                  -endOffset.dy),
-            ).animate(
-              CurvedAnimation(
-                parent: _animationController,
-                curve: Interval(
-                  beginInterval,
-                  endInterval,
-                  curve: Curves.easeOutQuint,
-                ),
-              ),
-            );
-            final fadeAnimation = Tween<double>(
-              begin: 1,
-              end: math.min(index / _particlesList.length, 0),
-            ).animate(
-              CurvedAnimation(
-                parent: _animationController,
-                curve: Interval(
-                  beginInterval,
-                  endInterval,
-                  curve: Curves.easeOut,
-                ),
-              ),
-            );
-            return AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) => Transform.translate(
-                offset: transformAnimation.value,
-                child: FadeTransition(
-                  opacity: fadeAnimation,
-                  child: Image.memory(e),
-                ),
-              ),
-              child: Image.memory(e),
-            );
-          }),
+          //Fades the actual widget when the animation start
           AnimatedOpacity(
             opacity: _animationController.isDismissed ? 1 : 0,
             duration: const Duration(milliseconds: 400),
@@ -214,8 +163,58 @@ class _ThanosSnapEffectState extends State<ThanosSnapEffect>
               child: Theme(data: ThemeData.dark(), child: widget.child),
             ),
           ),
+          //Loop throught the imageDataList and animate accordingly
+          ..._imageDataList.map(_animateImageData),
         ],
       ),
+    );
+  }
+
+  Widget _animateImageData(Uint8List imageData) {
+    //Get the current index of the imageData
+    final index = _imageDataList.indexOf(imageData);
+
+    //Calculate the animation start interval
+    //based on the index and lenght of imageDataList
+    final beginInterval = (index / _imageDataList.length) * 0.6;
+
+    //Calculate the animation end interval
+    //based on the start interval
+    final endInterval = math.max(beginInterval * 0.3, 1).toDouble();
+    final endOffset = toPolar(MediaQuery.sizeOf(context).center(Offset.zero),
+        index, _imageDataList.length, 100);
+
+    final curvedAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        beginInterval,
+        endInterval,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    final transformAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: Offset(
+          endOffset.dx.toInt().isEven ? endOffset.dx / 2 : -endOffset.dx / 2,
+          -endOffset.dy),
+    ).animate(curvedAnimation);
+
+    final fadeAnimation = Tween<double>(
+      begin: 1,
+      end: math.min(index / _imageDataList.length, 0),
+    ).animate(curvedAnimation);
+
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) => Transform.translate(
+        offset: transformAnimation.value,
+        child: FadeTransition(
+          opacity: fadeAnimation,
+          child: child,
+        ),
+      ),
+      child: Image.memory(imageData),
     );
   }
 
@@ -226,15 +225,19 @@ class _ThanosSnapEffectState extends State<ThanosSnapEffect>
     //If the capturedImage is null stop the operation
     if (capturedImageList == null) return;
 
-    //Generate list of captured images with captured image and particle size
-    final images = _generateImageDistribution(capturedImageList);
+    //This can be any value
+    const imageDataListSize = 25;
+
+    //Generate list of captured images with captured image and imageDataListSize
+    final images =
+        _generateImageDistribution(capturedImageList, imageDataListSize);
 
     //If generated image is empty stop the operation
     if (images.isEmpty) return;
 
     //Convert generated image to [Uint8List] type
     //so we can make use of Image.memory
-    _particlesList.addAll(images.map((e) => img.encodePng(e)).toList());
+    _imageDataList.addAll(images.map((e) => img.encodePng(e)).toList());
     setState(() {});
 
     //After all the operation
@@ -242,11 +245,19 @@ class _ThanosSnapEffectState extends State<ThanosSnapEffect>
     _startAnimation();
   }
 
-  List<img.Image> _generateImageDistribution(Uint8List imageData) {
+  ///Use to generate image based on captured image and imageDataListSize
+  ///More like breaking the captured image into chunks of given imageDataListSize
+  List<img.Image> _generateImageDistribution(
+      Uint8List imageData, int imageDataListSize) {
+    //Convert the imageData into PNG format
     final decodedImage = img.decodePng(imageData);
+
+    //Stop the excution when the image converstion fails
     if (decodedImage == null) return [];
+
+    //Generate empty Image list based on the imageDataListSize
     final imageDataList = List<img.Image>.generate(
-      _particleSize,
+      imageDataListSize,
       (index) => img.Image(
         width: decodedImage.width,
         height: decodedImage.height,
@@ -254,17 +265,34 @@ class _ThanosSnapEffectState extends State<ThanosSnapEffect>
       ),
     );
 
+    //Loop through the converted png image width and height
+    //Replace generated empty image with the actual image
+    //based on weighted random distribution
     for (var y = 0; y < decodedImage.height; y++) {
       for (var x = 0; x < decodedImage.width; x++) {
+        //Generate random weights with the imageDataListSize
         final weights = List.generate(
-            _particleSize,
-            (index) => math.Random()
-                .nextInt(decodedImage.height * decodedImage.width));
-        final index = _weightedRandomDistribution(weights, _particleSize);
+          imageDataListSize,
+          (index) =>
+              math.Random().nextInt(decodedImage.height * decodedImage.width),
+        );
+
+        //Generate index based on the weighted random distribution algo
+        //using the List of weights, pimageDataListSize and sumOfweights
+        final index = _weightedRandomDistribution(weights, imageDataListSize);
+
+        //Get the converted png image pixel based on the x and y value
         final pixel = decodedImage.getPixelSafe(x, y);
+
+        //Added this check to reduce the first image
+        //pixel alpha value because it looks like the actual
+        //captured image
         if (index == 0) {
           pixel.a = 1;
         }
+
+        //Assign the converted png image pixel to the empty image
+        //based on the index returned from weighted random distribution
         imageDataList[index].setPixel(x, y, pixel);
       }
     }
