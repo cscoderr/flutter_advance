@@ -18,6 +18,9 @@ class ThanosSnapEffectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Thanos Snap Effect'),
+      ),
       body: SafeArea(
         child: Center(
           child: Column(

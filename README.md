@@ -4,6 +4,10 @@ You can see the animations on my [Twitter Profile](https://twitter.com/CsCoder_)
 
 Feel free to star, fork and contribute.
 
+### Thanos Snap Effect || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/thanos_snap_effect/view/thanos_snap_effect_page.dart)
+
+<img src="gifs/thanos_snap_effect.gif" width="50%" vspace="10" hspace="10"/>
+
 ### Photo Extractor || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/photo_extractor/view/photo_extractor_page.dart)
 
 <img src="gifs/photo_extractor.gif" width="50%" vspace="10" hspace="10"/>
