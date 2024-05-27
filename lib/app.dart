@@ -9,7 +9,6 @@ import 'package:animation_playground/photo_extractor/photo_extractor.dart';
 import 'package:animation_playground/rainbow_sticks_page.dart';
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
 import 'package:animation_playground/text_shimmer_wave.dart';
-import 'package:animation_playground/thanos_snap_effect/view/telegram_thanos_snap_effect.dart';
 import 'package:animation_playground/thanos_snap_effect/view/thanos_snap_effect_page.dart';
 import 'package:animation_playground/water_wave_animation/water_wave_animation_page.dart';
 import 'package:flutter/material.dart';
@@ -26,12 +25,6 @@ class App extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         children: [
-          SolidButton(
-            text: "Thanos Snap Effect 2",
-            onPressed: () => Navigator.of(context)
-                .push(TelegramThanosSnapEffectPage.route()),
-          ),
-          const SizedBox(height: 20),
           SolidButton(
             text: "Thanos Snap Effect",
             onPressed: () =>
