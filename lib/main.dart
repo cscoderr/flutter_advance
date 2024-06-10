@@ -1,4 +1,5 @@
 import 'package:animation_playground/app.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,9 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Advance',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.light,
+      theme: FlexThemeData.light(scheme: FlexScheme.brandBlue),
+      darkTheme: FlexThemeData.dark(scheme: FlexScheme.brandBlue),
+      // themeMode: ThemeMode.light,
       home: const App(),
     );
   }

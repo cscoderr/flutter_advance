@@ -46,7 +46,8 @@ class SliderText extends StatefulWidget {
 
 class _SliderTextState extends State<SliderText> {
   late final ScrollController _scrollController;
-  final double _maxScrollHeight = 52;
+  final double _maxScrollHeight = 72;
+  //72
   @override
   void initState() {
     super.initState();
