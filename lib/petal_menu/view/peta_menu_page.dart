@@ -1,18 +1,19 @@
-import 'package:animation_playground/rainbow_sticks_page.dart';
+import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
-class PetalMenu extends StatefulWidget {
-  const PetalMenu({super.key});
+class PetalMenuPage extends StatefulWidget {
+  const PetalMenuPage({super.key});
 
   static PageRoute route() =>
-      MaterialPageRoute(builder: (_) => const PetalMenu());
+      MaterialPageRoute(builder: (_) => const PetalMenuPage());
 
   @override
-  State<PetalMenu> createState() => _PetalMenuState();
+  State<PetalMenuPage> createState() => _PetalMenuPageState();
 }
 
-class _PetalMenuState extends State<PetalMenu> with TickerProviderStateMixin {
+class _PetalMenuPageState extends State<PetalMenuPage>
+    with TickerProviderStateMixin {
   final colors = [
     Colors.orange,
     Colors.yellow,

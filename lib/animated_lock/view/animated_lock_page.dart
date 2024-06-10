@@ -2,17 +2,17 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-class AnimatedLock extends StatefulWidget {
-  const AnimatedLock({Key? key}) : super(key: key);
+class AnimatedLockPage extends StatefulWidget {
+  const AnimatedLockPage({Key? key}) : super(key: key);
 
   static PageRoute route() =>
-      MaterialPageRoute(builder: (_) => const AnimatedLock());
+      MaterialPageRoute(builder: (_) => const AnimatedLockPage());
 
   @override
-  State<AnimatedLock> createState() => _AnimatedLockState();
+  State<AnimatedLockPage> createState() => _AnimatedLockPageState();
 }
 
-class _AnimatedLockState extends State<AnimatedLock>
+class _AnimatedLockPageState extends State<AnimatedLockPage>
     with SingleTickerProviderStateMixin {
   late bool isLocked;
   late AnimationController _controller;

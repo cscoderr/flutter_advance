@@ -1,14 +1,14 @@
-import 'package:animation_playground/animated_card.dart';
-import 'package:animation_playground/animated_lock.dart';
-import 'package:animation_playground/animated_progress_bar.dart';
+import 'package:animation_playground/animated_card/animated_card.dart';
+import 'package:animation_playground/animated_lock/animated_lock.dart';
+import 'package:animation_playground/animated_progress_bar/animated_progress_bar.dart';
 import 'package:animation_playground/animated_slider/view/animated_slider_page.dart';
-import 'package:animation_playground/blur_animation.dart';
-import 'package:animation_playground/petal_menu.dart';
-import 'package:animation_playground/phone_pattern.dart';
+import 'package:animation_playground/blur_animation/blur_animation.dart';
+import 'package:animation_playground/petal_menu/petal_menu.dart';
+import 'package:animation_playground/phone_pattern/phone_pattern.dart';
 import 'package:animation_playground/photo_extractor/photo_extractor.dart';
-import 'package:animation_playground/rainbow_sticks_page.dart';
+import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
 import 'package:animation_playground/swipe_to_pay/swipe_to_pay.dart';
-import 'package:animation_playground/text_shimmer_wave.dart';
+import 'package:animation_playground/text_shimmer_wave/text_shimmer_wave.dart';
 import 'package:animation_playground/thanos_snap_effect/view/thanos_snap_effect_page.dart';
 import 'package:animation_playground/water_wave_animation/water_wave_animation_page.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class App extends StatelessWidget {
           SolidButton(
             text: "Text Shimmer",
             onPressed: () =>
-                Navigator.of(context).push(TextShimmerWave.route()),
+                Navigator.of(context).push(TextShimmerWavePage.route()),
           ),
           const SizedBox(height: 20),
           SolidButton(
@@ -60,7 +60,7 @@ class App extends StatelessWidget {
           const SizedBox(height: 20),
           SolidButton(
             text: "Petal Menu Animation",
-            onPressed: () => Navigator.of(context).push(PetalMenu.route()),
+            onPressed: () => Navigator.of(context).push(PetalMenuPage.route()),
           ),
           const SizedBox(height: 20),
           SolidButton(
@@ -71,7 +71,8 @@ class App extends StatelessWidget {
           const SizedBox(height: 20),
           SolidButton(
             text: "Animated Lock",
-            onPressed: () => Navigator.of(context).push(AnimatedLock.route()),
+            onPressed: () =>
+                Navigator.of(context).push(AnimatedLockPage.route()),
           ),
           const SizedBox(height: 20),
           SolidButton(

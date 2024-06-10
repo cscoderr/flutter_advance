@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:animation_playground/gen/assets.gen.dart';
-import 'package:animation_playground/rainbow_sticks_page.dart';
+import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:iconsax/iconsax.dart';

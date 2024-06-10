@@ -2,17 +2,17 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-class TextShimmerWave extends StatefulWidget {
-  const TextShimmerWave({super.key});
+class TextShimmerWavePage extends StatefulWidget {
+  const TextShimmerWavePage({super.key});
 
   static PageRoute route() =>
-      MaterialPageRoute(builder: (_) => const TextShimmerWave());
+      MaterialPageRoute(builder: (_) => const TextShimmerWavePage());
 
   @override
-  State<TextShimmerWave> createState() => _TextShimmerWaveState();
+  State<TextShimmerWavePage> createState() => _TextShimmerWavePageState();
 }
 
-class _TextShimmerWaveState extends State<TextShimmerWave>
+class _TextShimmerWavePageState extends State<TextShimmerWavePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   @override
