@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedLockPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class AnimatedLockPage extends StatefulWidget {
 
 class _AnimatedLockPageState extends State<AnimatedLockPage>
     with SingleTickerProviderStateMixin {
-  late bool isLocked;
+  bool isLocked = true;
   late AnimationController _controller;
   late Animation<double> _arcAnimation;
 
@@ -24,12 +25,10 @@ class _AnimatedLockPageState extends State<AnimatedLockPage>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
-    )..reverse();
-    _arcAnimation =
-        Tween(begin: -180 * math.pi / 180, end: -90 * math.pi / 180).animate(
+    )..forward();
+    _arcAnimation = Tween(begin: -180.radians, end: -90.radians).animate(
       CurvedAnimation(parent: _controller, curve: Curves.elasticInOut),
     );
-    isLocked = true;
   }
 
   @override
@@ -60,14 +59,13 @@ class _AnimatedLockPageState extends State<AnimatedLockPage>
                 Switch.adaptive(
                   value: isLocked,
                   onChanged: (value) {
-                    setState(() {
-                      isLocked = !isLocked;
-                      if (isLocked) {
-                        _controller.reverse();
-                      } else {
-                        _controller.forward();
-                      }
-                    });
+                    isLocked = !isLocked;
+                    if (isLocked) {
+                      _controller.forward();
+                    } else {
+                      _controller.reverse();
+                    }
+                    setState(() {});
                   },
                 ),
               ],

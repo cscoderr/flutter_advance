@@ -60,6 +60,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Transform.rotate(
         angle: _rotationAnimation.value,
         child: ScaleTransition(

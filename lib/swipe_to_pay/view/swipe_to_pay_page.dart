@@ -112,27 +112,30 @@ class _SwipeToPayPageState extends State<SwipeToPayPage>
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: AnimatedBuilder(
-              animation: Listenable.merge([
-                _animationController,
-                _animationController2,
-                _amountController,
-              ]),
-              builder: (context, child) {
-                return Column(
-                  children: [
-                    _buildSegmentedButton(),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: _buildMainContent(),
-                    ),
-                    const SizedBox(height: 40),
-                    _buildSliderWidget()
-                  ],
-                );
-              }),
+        child: Theme(
+          data: ThemeData.dark(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: AnimatedBuilder(
+                animation: Listenable.merge([
+                  _animationController,
+                  _animationController2,
+                  _amountController,
+                ]),
+                builder: (context, child) {
+                  return Column(
+                    children: [
+                      _buildSegmentedButton(),
+                      const SizedBox(height: 20),
+                      Expanded(
+                        child: _buildMainContent(),
+                      ),
+                      const SizedBox(height: 40),
+                      _buildSliderWidget()
+                    ],
+                  );
+                }),
+          ),
         ),
       ),
     );

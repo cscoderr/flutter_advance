@@ -19,6 +19,7 @@ class _BlurAnimationState extends State<BlurAnimation> {
   Widget build(BuildContext context) {
     final words = text.split("");
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
           child: GestureDetector(
