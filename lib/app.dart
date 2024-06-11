@@ -13,6 +13,7 @@ import 'package:animation_playground/water_wave_animation/water_wave_animation_p
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
+import 'about/about.dart';
 import 'phone_pattern/phone_pattern.dart';
 import 'swipe_to_pay/swipe_to_pay.dart';
 
@@ -32,7 +33,7 @@ class App extends StatelessWidget {
         title: const Text("Flutter Animations"),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).push(AboutPage.route()),
             icon: Icon(
               Iconsax.info_circle,
               color: Theme.of(context).primaryColor,
