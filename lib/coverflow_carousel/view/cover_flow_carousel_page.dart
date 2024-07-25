@@ -8,7 +8,7 @@ enum CoverFlowStyle {
   both,
 }
 
-final _coverFlowStyle = ValueNotifier<CoverFlowStyle>(CoverFlowStyle.none);
+final _coverFlowStyle = ValueNotifier<CoverFlowStyle>(CoverFlowStyle.both);
 
 class CoverFlowCarouselPage extends StatelessWidget {
   const CoverFlowCarouselPage({super.key});
@@ -44,7 +44,7 @@ class CoverFlowCarouselPage extends StatelessWidget {
                     ],
                     selected: {value},
                     onSelectionChanged: (value) {
-                      _coverFlowStyle.value = value.first;
+                      _coverFlowStyle.value = value.last;
                     },
                   )
                 ],
@@ -201,30 +201,23 @@ class _CoverFlowPositionedItem extends StatelessWidget {
       ),
     );
 
-    if (style == CoverFlowStyle.scale) {
-      child = Transform.scale(
-        scale: _getScaleValue,
-        child: child,
-      );
-    }
+    child = AnimatedScale(
+      scale: style == CoverFlowStyle.scale || style == CoverFlowStyle.both
+          ? _getScaleValue
+          : 1,
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.ease,
+      child: child,
+    );
 
-    if (style == CoverFlowStyle.opacity) {
-      child = Opacity(
-        opacity: _getOpacityValue,
-        child: child,
-      );
-    }
-
-    if (style == CoverFlowStyle.both) {
-      child = Transform.scale(
-        scale: _getScaleValue,
-        child: AnimatedOpacity(
-          opacity: _getOpacityValue,
-          duration: const Duration(milliseconds: 300),
-          child: child,
-        ),
-      );
-    }
+    child = AnimatedOpacity(
+      opacity: style == CoverFlowStyle.opacity || style == CoverFlowStyle.both
+          ? _getOpacityValue
+          : 1,
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.ease,
+      child: child,
+    );
 
     child = Padding(
       padding: EdgeInsets.only(left: spacing / 2),
