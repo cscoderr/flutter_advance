@@ -1,17 +1,75 @@
 import 'package:animation_playground/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
-class CoverFlowCarouselPage extends StatefulWidget {
+enum CoverFlowStyle {
+  none,
+  scale,
+  opacity,
+  both,
+}
+
+final _coverFlowStyle = ValueNotifier<CoverFlowStyle>(CoverFlowStyle.none);
+
+class CoverFlowCarouselPage extends StatelessWidget {
   const CoverFlowCarouselPage({super.key});
 
   static PageRoute route() =>
       MaterialPageRoute(builder: (context) => const CoverFlowCarouselPage());
 
   @override
-  State<CoverFlowCarouselPage> createState() => _CoverFlowCarouselPageState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: ValueListenableBuilder(
+          valueListenable: _coverFlowStyle,
+          builder: (context, value, child) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CoverFlowCarouselView(style: value),
+                  const SizedBox(height: 20),
+                  SegmentedButton<CoverFlowStyle>(
+                    emptySelectionAllowed: true,
+                    segments: const [
+                      ButtonSegment(
+                          value: CoverFlowStyle.none, label: Text('None')),
+                      ButtonSegment(
+                          value: CoverFlowStyle.scale, label: Text('Scale')),
+                      ButtonSegment(
+                          value: CoverFlowStyle.opacity,
+                          label: Text('Opacity')),
+                      ButtonSegment(
+                          value: CoverFlowStyle.both, label: Text('Both')),
+                    ],
+                    selected: {value},
+                    onSelectionChanged: (value) {
+                      _coverFlowStyle.value = value.first;
+                    },
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
-class _CoverFlowCarouselPageState extends State<CoverFlowCarouselPage> {
+class CoverFlowCarouselView extends StatefulWidget {
+  const CoverFlowCarouselView({
+    super.key,
+    this.style = CoverFlowStyle.none,
+  });
+
+  final CoverFlowStyle style;
+
+  @override
+  State<CoverFlowCarouselView> createState() => _CoverFlowCarouselViewState();
+}
+
+class _CoverFlowCarouselViewState extends State<CoverFlowCarouselView> {
   late PageController _pageController;
   final _maxHeight = 150.0;
   final _minItemWidth = 40.0;
@@ -55,39 +113,36 @@ class _CoverFlowCarouselPageState extends State<CoverFlowCarouselPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
-    return Scaffold(
-      body: Center(
-        child: SizedBox(
-          height: _maxHeight,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned.fill(
-                child: Stack(
-                  children: _images.asMap().entries.map((item) {
-                    final currentIndex = _currentPageIndex - item.key;
-                    return _CoverFlowPositionedItem(
-                      imagePath: item.value,
-                      index: currentIndex,
-                      absIndex: currentIndex.abs(),
-                      size: Size(screenWidth, _maxHeight),
-                      minItemWidth: _minItemWidth,
-                      maxItemWidth: screenWidth / 2,
-                      spacing: _spacing,
-                    );
-                  }).toList(),
-                ),
-              ),
-              Positioned.fill(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemBuilder: (context, index) => const SizedBox.expand(),
-                  itemCount: _images.length,
-                ),
-              ),
-            ],
+    return SizedBox(
+      height: _maxHeight,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            child: Stack(
+              children: _images.asMap().entries.map((item) {
+                final currentIndex = _currentPageIndex - item.key;
+                return _CoverFlowPositionedItem(
+                  imagePath: item.value,
+                  index: currentIndex,
+                  absIndex: currentIndex.abs(),
+                  size: Size(screenWidth, _maxHeight),
+                  minItemWidth: _minItemWidth,
+                  maxItemWidth: screenWidth / 2,
+                  spacing: _spacing,
+                  style: widget.style,
+                );
+              }).toList(),
+            ),
           ),
-        ),
+          Positioned.fill(
+            child: PageView.builder(
+              controller: _pageController,
+              itemBuilder: (context, index) => const SizedBox.expand(),
+              itemCount: _images.length,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -102,6 +157,7 @@ class _CoverFlowPositionedItem extends StatelessWidget {
     required this.minItemWidth,
     required this.maxItemWidth,
     required this.spacing,
+    required this.style,
   });
   final String imagePath;
   final double index;
@@ -110,6 +166,7 @@ class _CoverFlowPositionedItem extends StatelessWidget {
   final double minItemWidth;
   final double maxItemWidth;
   final double spacing;
+  final CoverFlowStyle style;
 
   double get _getItemPosition {
     final centerPosition = size.width / 2;
@@ -121,29 +178,63 @@ class _CoverFlowPositionedItem extends StatelessWidget {
   double get _calculateItemWidth {
     final diffWidth = maxItemWidth - minItemWidth;
     final newMaxItemWidth = maxItemWidth - (diffWidth * absIndex);
-    return absIndex < 1 ? newMaxItemWidth : minItemWidth;
+    return (absIndex < 1 ? newMaxItemWidth : minItemWidth) - spacing;
   }
 
   double get _getScaleValue => 1 - (0.15 * absIndex);
 
+  double get _getOpacityValue {
+    return (1 - (0.2 * absIndex)).clamp(0, 1);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: Offset(_getItemPosition, 0),
-      child: Transform.scale(
-        scale: _getScaleValue,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: SizedBox(
-            width: _calculateItemWidth,
-            height: size.height,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
-          ),
+    Widget child = ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: SizedBox(
+        width: _calculateItemWidth,
+        height: size.height,
+        child: Image.asset(
+          imagePath,
+          fit: BoxFit.cover,
         ),
       ),
+    );
+
+    if (style == CoverFlowStyle.scale) {
+      child = Transform.scale(
+        scale: _getScaleValue,
+        child: child,
+      );
+    }
+
+    if (style == CoverFlowStyle.opacity) {
+      child = AnimatedOpacity(
+        opacity: _getOpacityValue,
+        duration: const Duration(milliseconds: 100),
+        child: child,
+      );
+    }
+
+    if (style == CoverFlowStyle.both) {
+      child = Transform.scale(
+        scale: _getScaleValue,
+        child: AnimatedOpacity(
+          opacity: _getOpacityValue,
+          duration: const Duration(milliseconds: 300),
+          child: child,
+        ),
+      );
+    }
+
+    child = Padding(
+      padding: EdgeInsets.only(left: spacing / 2),
+      child: child,
+    );
+
+    return Transform.translate(
+      offset: Offset(_getItemPosition, 0),
+      child: child,
     );
   }
 
@@ -167,7 +258,7 @@ class _CoverFlowPositionedItem extends StatelessWidget {
     final leftPosition = _calculateLeftPosition(mainPosition);
     final rightPosition = _calculateRightPosition(mainPosition);
     return index > 0
-        ? leftPosition - diffPosition - spacing
-        : rightPosition + diffPosition + spacing;
+        ? leftPosition - diffPosition
+        : rightPosition + diffPosition;
   }
 }
