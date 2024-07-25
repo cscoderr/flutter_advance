@@ -27,6 +27,49 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/bedroom1.jpg
+  AssetGenImage get bedroom1 =>
+      const AssetGenImage('assets/images/bedroom1.jpg');
+
+  /// File path: assets/images/bedroom10.jpg
+  AssetGenImage get bedroom10 =>
+      const AssetGenImage('assets/images/bedroom10.jpg');
+
+  /// File path: assets/images/bedroom2.jpg
+  AssetGenImage get bedroom2 =>
+      const AssetGenImage('assets/images/bedroom2.jpg');
+
+  /// File path: assets/images/bedroom3.jpg
+  AssetGenImage get bedroom3 =>
+      const AssetGenImage('assets/images/bedroom3.jpg');
+
+  /// File path: assets/images/bedroom4.jpg
+  AssetGenImage get bedroom4 =>
+      const AssetGenImage('assets/images/bedroom4.jpg');
+
+  /// File path: assets/images/bedroom5.jpg
+  AssetGenImage get bedroom5 =>
+      const AssetGenImage('assets/images/bedroom5.jpg');
+
+  /// File path: assets/images/bedroom6.jpg
+  AssetGenImage get bedroom6 =>
+      const AssetGenImage('assets/images/bedroom6.jpg');
+
+  /// File path: assets/images/bedroom7.jpg
+  AssetGenImage get bedroom7 =>
+      const AssetGenImage('assets/images/bedroom7.jpg');
+
+  /// File path: assets/images/bedroom8.jpg
+  AssetGenImage get bedroom8 =>
+      const AssetGenImage('assets/images/bedroom8.jpg');
+
+  /// File path: assets/images/bedroom9.jpg
+  AssetGenImage get bedroom9 =>
+      const AssetGenImage('assets/images/bedroom9.jpg');
+
+  /// File path: assets/images/dash.png
+  AssetGenImage get dash => const AssetGenImage('assets/images/dash.png');
+
   /// File path: assets/images/feature1.png
   AssetGenImage get feature1 =>
       const AssetGenImage('assets/images/feature1.png');
@@ -52,8 +95,26 @@ class $AssetsImagesGen {
   AssetGenImage get img4 => const AssetGenImage('assets/images/img4.jpeg');
 
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [feature1, feature2, feature3, img, img2, img3, img4];
+  List<AssetGenImage> get values => [
+        bedroom1,
+        bedroom10,
+        bedroom2,
+        bedroom3,
+        bedroom4,
+        bedroom5,
+        bedroom6,
+        bedroom7,
+        bedroom8,
+        bedroom9,
+        dash,
+        feature1,
+        feature2,
+        feature3,
+        img,
+        img2,
+        img3,
+        img4
+      ];
 }
 
 class $AssetsSoundsGen {

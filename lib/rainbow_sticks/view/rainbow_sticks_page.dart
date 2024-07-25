@@ -152,6 +152,13 @@ extension NumX<T extends num> on T {
 
 Offset toPolar(Offset center, int index, int total, double radius) {
   final theta = index * total.stepsInAngle;
+  final dx = math.cos(theta) * radius;
+  final dy = math.sin(theta) * radius;
+  return Offset(dx, dy) + center;
+}
+
+Offset toArc(Offset center, int index, int total, double radius) {
+  final theta = index * total.stepsInAngle;
   final dx = radius * math.cos(theta);
   final dy = radius * math.sin(theta);
   return Offset(dx, dy) + center;

@@ -4,6 +4,7 @@ import 'package:animation_playground/animated_progress_bar/animated_progress_bar
 import 'package:animation_playground/animated_slider/view/animated_slider_page.dart';
 import 'package:animation_playground/blur_animation/blur_animation.dart';
 import 'package:animation_playground/core/core.dart';
+import 'package:animation_playground/coverflow_carousel/coverflow_carousel.dart';
 import 'package:animation_playground/petal_menu/petal_menu.dart';
 import 'package:animation_playground/photo_extractor/photo_extractor.dart';
 import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
@@ -46,6 +47,28 @@ class App extends StatelessWidget {
           horizontal: 20,
         ),
         children: [
+          const AppTextDivider(text: 'Latest'),
+          // AppElevatedButton(
+          //   text: "Tarrot Scroll",
+          //   icon: const Icon(Iconsax.coin),
+          //   onPressed: () =>
+          //       Navigator.of(context).push(TarotScrollPage.route()),
+          // ),
+          // const SizedBox(height: 20),
+          AppElevatedButton(
+            text: "Coverflow Carousel",
+            icon: const Icon(Iconsax.coin),
+            onPressed: () =>
+                Navigator.of(context).push(CoverFlowCarouselPage.route()),
+          ),
+          // const SizedBox(height: 20),
+          // AppElevatedButton(
+          //   text: "Tapcoin Animation",
+          //   icon: const Icon(Iconsax.coin),
+          //   onPressed: () =>
+          //       Navigator.of(context).push(TapCoinAnimationPage.route()),
+          // ),
+          const SizedBox(height: 20),
           // //
           const AppTextDivider(text: '🥸'),
           AppElevatedButton(
