@@ -209,9 +209,8 @@ class _CoverFlowPositionedItem extends StatelessWidget {
     }
 
     if (style == CoverFlowStyle.opacity) {
-      child = AnimatedOpacity(
+      child = Opacity(
         opacity: _getOpacityValue,
-        duration: const Duration(milliseconds: 100),
         child: child,
       );
     }
