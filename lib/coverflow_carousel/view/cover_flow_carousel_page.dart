@@ -23,6 +23,9 @@ class CoverFlowCarouselPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Coverflow Carousel'),
+      ),
       body: SafeArea(
         child: ValueListenableBuilder(
           valueListenable: _coverFlowStyle,
