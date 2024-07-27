@@ -5,7 +5,11 @@ enum CoverFlowStyle {
   none,
   scale,
   opacity,
-  both,
+  both;
+
+  bool get isOpacity => this == CoverFlowStyle.opacity;
+  bool get isScale => this == CoverFlowStyle.scale;
+  bool get isBoth => this == CoverFlowStyle.scale;
 }
 
 final _coverFlowStyle = ValueNotifier<CoverFlowStyle>(CoverFlowStyle.both);
@@ -30,7 +34,7 @@ class CoverFlowCarouselPage extends StatelessWidget {
                   CoverFlowCarouselView(style: value),
                   const SizedBox(height: 20),
                   SegmentedButton<CoverFlowStyle>(
-                    emptySelectionAllowed: true,
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(
                           value: CoverFlowStyle.none, label: Text('None')),
@@ -202,18 +206,14 @@ class _CoverFlowPositionedItem extends StatelessWidget {
     );
 
     child = AnimatedScale(
-      scale: style == CoverFlowStyle.scale || style == CoverFlowStyle.both
-          ? _getScaleValue
-          : 1,
+      scale: style.isScale || style.isBoth ? _getScaleValue : 1,
       duration: const Duration(milliseconds: 150),
       curve: Curves.ease,
       child: child,
     );
 
     child = AnimatedOpacity(
-      opacity: style == CoverFlowStyle.opacity || style == CoverFlowStyle.both
-          ? _getOpacityValue
-          : 1,
+      opacity: style.isOpacity || style.isBoth ? _getOpacityValue : 1,
       duration: const Duration(milliseconds: 150),
       curve: Curves.ease,
       child: child,
