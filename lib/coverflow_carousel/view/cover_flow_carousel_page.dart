@@ -26,39 +26,36 @@ class CoverFlowCarouselPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Coverflow Carousel'),
       ),
-      body: SafeArea(
-        child: ValueListenableBuilder(
-          valueListenable: _coverFlowStyle,
-          builder: (context, value, child) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CoverFlowCarouselView(style: value),
-                  const SizedBox(height: 20),
-                  SegmentedButton<CoverFlowStyle>(
-                    showSelectedIcon: false,
-                    segments: const [
-                      ButtonSegment(
-                          value: CoverFlowStyle.none, label: Text('None')),
-                      ButtonSegment(
-                          value: CoverFlowStyle.scale, label: Text('Scale')),
-                      ButtonSegment(
-                          value: CoverFlowStyle.opacity,
-                          label: Text('Opacity')),
-                      ButtonSegment(
-                          value: CoverFlowStyle.both, label: Text('Both')),
-                    ],
-                    selected: {value},
-                    onSelectionChanged: (value) {
-                      _coverFlowStyle.value = value.last;
-                    },
-                  )
-                ],
-              ),
-            );
-          },
-        ),
+      body: ValueListenableBuilder(
+        valueListenable: _coverFlowStyle,
+        builder: (context, value, child) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CoverFlowCarouselView(style: value),
+                const SizedBox(height: 20),
+                SegmentedButton<CoverFlowStyle>(
+                  showSelectedIcon: false,
+                  segments: const [
+                    ButtonSegment(
+                        value: CoverFlowStyle.none, label: Text('None')),
+                    ButtonSegment(
+                        value: CoverFlowStyle.scale, label: Text('Scale')),
+                    ButtonSegment(
+                        value: CoverFlowStyle.opacity, label: Text('Opacity')),
+                    ButtonSegment(
+                        value: CoverFlowStyle.both, label: Text('Both')),
+                  ],
+                  selected: {value},
+                  onSelectionChanged: (value) {
+                    _coverFlowStyle.value = value.last;
+                  },
+                )
+              ],
+            ),
+          );
+        },
       ),
     );
   }
