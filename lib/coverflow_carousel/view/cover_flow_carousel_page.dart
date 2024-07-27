@@ -9,7 +9,7 @@ enum CoverFlowStyle {
 
   bool get isOpacity => this == CoverFlowStyle.opacity;
   bool get isScale => this == CoverFlowStyle.scale;
-  bool get isBoth => this == CoverFlowStyle.scale;
+  bool get isBoth => this == CoverFlowStyle.both;
 }
 
 final _coverFlowStyle = ValueNotifier<CoverFlowStyle>(CoverFlowStyle.both);
