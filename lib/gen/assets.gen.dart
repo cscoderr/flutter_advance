@@ -94,6 +94,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/img4.jpeg
   AssetGenImage get img4 => const AssetGenImage('assets/images/img4.jpeg');
 
+  /// File path: assets/images/tarot_back.png
+  AssetGenImage get tarotBack =>
+      const AssetGenImage('assets/images/tarot_back.png');
+
+  /// File path: assets/images/tarot_front.png
+  AssetGenImage get tarotFront =>
+      const AssetGenImage('assets/images/tarot_front.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
         bedroom1,
@@ -113,7 +121,9 @@ class $AssetsImagesGen {
         img,
         img2,
         img3,
-        img4
+        img4,
+        tarotBack,
+        tarotFront
       ];
 }
 

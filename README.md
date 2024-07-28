@@ -4,6 +4,10 @@ You can see the animations on my [Twitter Profile](https://twitter.com/CsCoder_)
 
 Feel free to star, fork and contribute.
 
+### Coverflow Carousel || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/coverflow_carousel/view/coverflow_carousel_page.dart)
+
+<img src="gifs/coverflow_carousel.gif" width="50%" vspace="10" hspace="10"/>
+
 ### Thanos Snap Effect || [Link to code](https://github.com/cscoderr/flutter_advance/blob/main/lib/thanos_snap_effect/view/thanos_snap_effect_page.dart) || [Youtube Video](https://www.youtube.com/shorts/Rg7wY8zzbV0)
 
 <img src="gifs/thanos_snap_effect.gif" width="50%" vspace="10" hspace="10"/>

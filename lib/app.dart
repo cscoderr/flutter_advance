@@ -17,6 +17,7 @@ import 'package:iconsax/iconsax.dart';
 import 'about/about.dart';
 import 'phone_pattern/phone_pattern.dart';
 import 'swipe_to_pay/swipe_to_pay.dart';
+import 'tarot_scroll/view/tarot_scroll_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -48,16 +49,16 @@ class App extends StatelessWidget {
         ),
         children: [
           const AppTextDivider(text: 'Latest'),
-          // AppElevatedButton(
-          //   text: "Tarrot Scroll",
-          //   icon: const Icon(Iconsax.coin),
-          //   onPressed: () =>
-          //       Navigator.of(context).push(TarotScrollPage.route()),
-          // ),
-          // const SizedBox(height: 20),
+          AppElevatedButton(
+            text: "Tarrot Scroll",
+            icon: const Icon(Iconsax.coin),
+            onPressed: () =>
+                Navigator.of(context).push(TarotScrollPage.route()),
+          ),
+          const SizedBox(height: 20),
           AppElevatedButton(
             text: "Coverflow Carousel",
-            icon: const Icon(Iconsax.coin),
+            icon: const Icon(Iconsax.scroll),
             onPressed: () =>
                 Navigator.of(context).push(CoverFlowCarouselPage.route()),
           ),

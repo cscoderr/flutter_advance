@@ -1,9 +1,7 @@
-import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:animation_playground/gen/assets.gen.dart';
-import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 
 class TarotScrollPage extends StatefulWidget {
   const TarotScrollPage({super.key});
@@ -17,30 +15,140 @@ class TarotScrollPage extends StatefulWidget {
 
 class _TarotScrollPageState extends State<TarotScrollPage>
     with SingleTickerProviderStateMixin {
+  late FixedExtentScrollController _scrollController;
   late AnimationController _animationController;
 
-  final _totalCard = 50;
-  double angle = 0;
-  int prevPosInt = 1;
-
-  void runDeceleration(double velocity) {
-    final Simulation simulation = FrictionSimulation(.08, angle + 1, velocity);
-    _animationController.animateWith(simulation);
-  }
+  final _totalCard = 100;
+  int _currentIndex = 0;
 
   @override
   void initState() {
-    _animationController = AnimationController.unbounded(vsync: this);
-    _animationController.addListener(() {
-      if ((angle.toInt() - _animationController.value.toInt()) == 0) {
-        _animationController.stop();
-      } else {
-        setState(() {
-          angle = _animationController.value.toInt().toDouble();
-        });
-      }
-    });
     super.initState();
+    _scrollController = FixedExtentScrollController(initialItem: _totalCard);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        50 * 100,
+        duration: const Duration(milliseconds: 1000),
+        curve: Curves.ease,
+      );
+      _animationController.forward();
+    });
+    _animationController.addListener(
+      () {
+        setState(() {});
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.blueGrey,
+        appBar: AppBar(
+          title: const Text('Tarot Scroll'),
+        ),
+        body: OverflowBox(
+          alignment: Alignment.bottomCenter,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.3,
+          maxWidth: MediaQuery.sizeOf(context).width,
+          child: RotatedBox(
+            quarterTurns: 3,
+            child: ListWheelScrollView(
+              controller: _scrollController,
+              physics: const FixedExtentScrollPhysics(),
+              itemExtent: 70,
+              squeeze: 3.5 - _animationController.value,
+              renderChildrenOutsideViewport: true,
+              offAxisFraction: 4,
+              perspective: 0.001,
+              clipBehavior: Clip.none,
+              onSelectedItemChanged: (value) {
+                setState(() {
+                  _currentIndex = value;
+                });
+              },
+              children: List.generate(
+                _totalCard,
+                (index) {
+                  return GestureDetector(
+                    behavior: HitTestBehavior.deferToChild,
+                    onTap: () {
+                      // print('tap');
+                      // final pageRoute = PageRouteBuilder(
+                      //   pageBuilder: (context, animation, secondaryAnimation) {
+                      //     return TarotDetailsPage(index: index);
+                      //   },
+                      // );
+                      // Navigator.of(context).push(pageRoute);
+                    },
+                    child: Hero(
+                      tag: ValueKey('_tarot_image_tag_$index'),
+                      child: AnimatedTarotCard(
+                        key: ValueKey('_animated_tarot_card_$index'),
+                        index: _currentIndex,
+                        applyAnimation: index == _currentIndex.floor(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ));
+  }
+}
+
+class AnimatedTarotCard extends StatefulWidget {
+  const AnimatedTarotCard({
+    super.key,
+    required this.index,
+    this.applyAnimation = false,
+  });
+  final int index;
+  final bool applyAnimation;
+
+  @override
+  State<AnimatedTarotCard> createState() => _AnimatedTarotCardState();
+}
+
+class _AnimatedTarotCardState extends State<AnimatedTarotCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+      // reverseDuration: const Duration(milliseconds: 100),
+    );
+
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 55.0 + (widget.index / 50),
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    if (widget.applyAnimation) {
+      _animationController.forward();
+    }
   }
 
   @override
@@ -50,39 +158,90 @@ class _TarotScrollPageState extends State<TarotScrollPage>
   }
 
   @override
+  void didUpdateWidget(covariant AnimatedTarotCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.index < 0 || widget.index > 99) return;
+    if (widget.applyAnimation) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+      // WidgetsBinding.instance.addPostFrameCallback(
+      //     (timeStamp) => Future.delayed(const Duration(milliseconds: 100), () {
+
+      //         }));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(_animation.value, 0),
+            child: RotatedBox(
+              quarterTurns: 1,
+              child: Container(
+                width: 70,
+                height: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  image: DecorationImage(
+                    image: ResizeImage(
+                      Assets.images.img.provider(),
+                      width: 210,
+                      height: 300,
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                  border: Border.all(color: Colors.grey[300]!, width: 5),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+}
+
+class TarotDetailsPage extends StatelessWidget {
+  const TarotDetailsPage({
+    super.key,
+    required this.index,
+  });
+
+  final int index;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey,
-      appBar: AppBar(
-        title: const Text('Tarot Scroll'),
-      ),
-      body: Center(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final size = constraints.biggest;
-            final center = size.center(Offset.zero);
-            return Stack(
-              alignment: Alignment.center,
-              children: List.generate(
-                _totalCard,
-                (index) {
-                  final radius = math.max(
-                      ((50 * 0.5) * _totalCard) / (math.pi * 2),
-                      size.width / 2);
-                  final theta = index * _totalCard.stepsInAngle;
-                  final x = (math.cos(theta) * radius) + center.dx;
-                  final y = (math.sin(theta) * radius) - 100;
-                  return Positioned(
-                    left: x,
-                    bottom: y,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const BackButton(),
+              const SizedBox(height: 10),
+              Hero(
+                tag: ValueKey('_tarot_image_tag_$index'),
+                flightShuttleBuilder: (flightContext, animation,
+                    flightDirection, fromHeroContext, toHeroContext) {
+                  final newAnimation =
+                      Tween(begin: 1, end: 0.0).animate(animation);
+                  return Transform(
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.001)
+                      ..rotateZ(-pi * newAnimation.value),
+                    alignment: Alignment.centerRight,
                     child: Container(
-                      width: 50,
+                      width: 70,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: Colors.white,
                         borderRadius: BorderRadius.circular(5),
                         image: DecorationImage(
-                          image: Assets.images.img.provider(),
+                          image: Assets.images.tarotBack.provider(),
                           fit: BoxFit.cover,
                         ),
                         border: Border.all(color: Colors.white, width: 5),
@@ -90,73 +249,22 @@ class _TarotScrollPageState extends State<TarotScrollPage>
                     ),
                   );
                 },
+                child: Container(
+                  width: double.infinity,
+                  height: MediaQuery.sizeOf(context).height * 0.7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    image: DecorationImage(
+                      image: Assets.images.tarotFront.provider(),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
-  }
-}
-
-class TarotCard extends StatelessWidget {
-  const TarotCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100 * 0.6,
-      height: 100,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-          image: DecorationImage(
-            image: Assets.images.img.provider(),
-            fit: BoxFit.cover,
-          ),
-          border: Border.all(color: Colors.white, width: 5)),
-    );
-  }
-}
-
-class X1Painter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // create a bounding square, based on the centre and radius of the arc
-    Rect rect = Rect.fromCircle(
-      center: const Offset(165.0, 55.0),
-      radius: 300.0,
-    );
-
-    // a fancy rainbow gradient
-    final Gradient gradient = RadialGradient(
-      colors: <Color>[
-        Colors.green.withOpacity(1.0),
-        Colors.green.withOpacity(0.3),
-        Colors.yellow.withOpacity(0.2),
-        Colors.red.withOpacity(0.1),
-        Colors.red.withOpacity(0.0),
-      ],
-      stops: const [
-        0.0,
-        0.5,
-        0.7,
-        0.9,
-        1.0,
-      ],
-    );
-
-    // create the Shader from the gradient and the bounding square
-    final Paint paint = Paint()..shader = gradient.createShader(rect);
-
-    // and draw an arc
-    canvas.drawArc(rect, math.pi / 5, math.pi, false, paint);
-  }
-
-  @override
-  bool shouldRepaint(X1Painter oldDelegate) {
-    return true;
   }
 }
