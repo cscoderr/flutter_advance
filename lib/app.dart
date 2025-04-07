@@ -2,12 +2,14 @@ import 'package:animation_playground/animated_card/animated_card.dart';
 import 'package:animation_playground/animated_lock/animated_lock.dart';
 import 'package:animation_playground/animated_progress_bar/animated_progress_bar.dart';
 import 'package:animation_playground/animated_slider/view/animated_slider_page.dart';
+import 'package:animation_playground/apple_book_scroll/apple_book_scroll.dart';
 import 'package:animation_playground/blur_animation/blur_animation.dart';
 import 'package:animation_playground/core/core.dart';
 import 'package:animation_playground/coverflow_carousel/coverflow_carousel.dart';
 import 'package:animation_playground/petal_menu/petal_menu.dart';
 import 'package:animation_playground/photo_extractor/photo_extractor.dart';
 import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
+import 'package:animation_playground/text_particle/text_particle.dart';
 import 'package:animation_playground/text_shimmer_wave/text_shimmer_wave.dart';
 import 'package:animation_playground/thanos_snap_effect/view/thanos_snap_effect_page.dart';
 import 'package:animation_playground/water_wave_animation/water_wave_animation_page.dart';
@@ -48,7 +50,21 @@ class App extends StatelessWidget {
           horizontal: 20,
         ),
         children: [
+          const AppTextDivider(text: 'New'),
+          AppElevatedButton(
+            text: "Text Particle Animation",
+            icon: const Icon(Iconsax.text),
+            onPressed: () =>
+                Navigator.of(context).push(TextParticlePage.route()),
+          ),
           const AppTextDivider(text: 'Latest'),
+          AppElevatedButton(
+            text: "Apple Book Scroll Animation",
+            icon: const Icon(Iconsax.book),
+            onPressed: () =>
+                Navigator.of(context).push(AppleBookScrollPage.route()),
+          ),
+          const SizedBox(height: 20),
           AppElevatedButton(
             text: "Tarrot Scroll",
             icon: const Icon(Iconsax.coin),

@@ -103,8 +103,8 @@ class _PetalMenuPageState extends State<PetalMenuPage>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          selectedColor.withOpacity(0.2),
-                          selectedColor.withOpacity(0.5),
+                          selectedColor.withValues(alpha: 0.2),
+                          selectedColor.withValues(alpha: 0.5),
                           selectedColor
                         ],
                         begin: Alignment.topCenter,
@@ -172,7 +172,7 @@ class _PetalMenuPageState extends State<PetalMenuPage>
                                     colors: [
                                       colors[e.key],
                                       colors[e.key],
-                                      colors[e.key].withOpacity(0.7)
+                                      colors[e.key].withValues(alpha: 0.7)
                                     ],
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
@@ -183,7 +183,7 @@ class _PetalMenuPageState extends State<PetalMenuPage>
                                           .drive(ColorTween(
                                               begin: Colors.transparent,
                                               end: Colors.black
-                                                  .withOpacity(0.4)))
+                                                  .withValues(alpha: 0.4)))
                                           .value!,
                                       blurRadius: 5,
                                       offset: const Offset(0, 12),

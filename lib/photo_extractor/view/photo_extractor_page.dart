@@ -254,7 +254,7 @@ class _PhotoExtractorState extends State<PhotoExtractor>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.black.withOpacity(0.5),
+                Colors.black.withValues(alpha: 0.5),
                 Colors.transparent,
               ],
               begin: Alignment.topCenter,

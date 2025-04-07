@@ -106,7 +106,6 @@ class _OnboardingAnimationPageState extends State<OnboardingAnimationPage>
             child: PageView.builder(
               controller: _pageController,
               onPageChanged: (index) {
-                print(index);
                 // setState(() {
                 //   _currentIndex = index;
                 // });

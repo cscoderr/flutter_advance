@@ -62,6 +62,7 @@ class _AboutListTile extends StatelessWidget {
   const _AboutListTile({
     required this.title,
     required this.uri,
+    // ignore: unused_element_parameter
     this.subtitle,
     required this.icon,
   });

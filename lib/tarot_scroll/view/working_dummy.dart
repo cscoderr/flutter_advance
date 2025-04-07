@@ -72,7 +72,6 @@ class _TarotScrollPageState extends State<TarotScrollPage> {
                   return GestureDetector(
                     behavior: HitTestBehavior.deferToChild,
                     onTap: () {
-                      print('tap');
                       final pageRoute = PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) {
                           return TarotDetailsPage(index: index);

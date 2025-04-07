@@ -27,7 +27,6 @@ class _ScrollNumberPageState extends State<ScrollNumberPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(_scrollController.position);
     return Scaffold(
       body: Center(
         child: ConstrainedBox(
@@ -55,7 +54,6 @@ class _ScrollNumberPageState extends State<ScrollNumberPage> {
     );
   }
 }
-
 
 // import 'dart:math' as math;
 

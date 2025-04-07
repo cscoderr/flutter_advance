@@ -64,7 +64,7 @@ class _TextShimmerWavePageState extends State<TextShimmerWavePage>
                       'Salut comment ça va',
                       style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                     const SizedBox(height: 10),

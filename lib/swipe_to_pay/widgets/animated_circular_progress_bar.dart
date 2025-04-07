@@ -68,7 +68,7 @@ class CircularProgressPainter extends CustomPainter {
     const double arcSize = circleRadius * 2;
 
     final innerCirclePaint = Paint()
-      ..color = Colors.green.withOpacity(0.2)
+      ..color = Colors.green.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10;
     final progressCirclePaint = Paint()

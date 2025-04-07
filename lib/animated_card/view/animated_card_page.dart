@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class AnimatedCardPage extends StatelessWidget {
@@ -66,7 +64,7 @@ class _AnimatedCardState extends State<AnimatedCard>
       vsync: this,
       duration: const Duration(milliseconds: 200),
     );
-    var screenWidth = window.physicalSize.shortestSide;
+    // var screenWidth = window.physicalSize.shortestSide;
 
     _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
@@ -103,7 +101,7 @@ class _AnimatedCardState extends State<AnimatedCard>
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               spreadRadius: 5,
               blurRadius: 7,
               offset: const Offset(0, 3), // changes position of shadow
@@ -139,7 +137,7 @@ class _AnimatedCardState extends State<AnimatedCard>
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: (widget.inactiveColor ?? widget.activeColor)
-                              .withOpacity(_opacityAnimation.value)),
+                              .withValues(alpha: _opacityAnimation.value)),
                       child: const Icon(
                         Icons.message,
                         size: 40,

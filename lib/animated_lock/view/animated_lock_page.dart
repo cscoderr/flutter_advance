@@ -126,7 +126,7 @@ class LockPainter extends CustomPainter {
 
     canvas.drawPath(overlayPath, overlayPaint);
     if (!isLocked) {
-      canvas.drawShadow(path, Colors.green.withOpacity(0.5), 3, true);
+      canvas.drawShadow(path, Colors.green.withValues(alpha: 0.5), 3, true);
     }
     canvas.drawPath(path, paint);
   }
