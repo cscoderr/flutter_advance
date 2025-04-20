@@ -44,7 +44,10 @@ class _TextParticlePageState extends State<TextParticlePage> {
                     ? TextParticleAnimation(
                         text: textController.text,
                       )
-                    : const SizedBox.shrink(),
+                    : Text(
+                        'Enter text to see animation',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
               ),
             ),
             Text(
@@ -54,13 +57,14 @@ class _TextParticlePageState extends State<TextParticlePage> {
             const SizedBox(height: 15),
             TextField(
               controller: textController,
-              maxLength: 2,
+              maxLength: 3,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
               decoration: InputDecoration(
                 hintText: 'Enter text',
+                counterText: '',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -89,11 +93,12 @@ class TextParticleAnimation extends StatefulWidget {
 }
 
 class _TextParticleAnimationState extends State<TextParticleAnimation>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   int particleCount = 1000;
   final _particles = <Particle>[];
   late Ticker _ticker;
   final _repaintNotifier = ValueNotifier(0);
+  final _containerKey = GlobalKey();
 
   @override
   void initState() {
@@ -103,12 +108,11 @@ class _TextParticleAnimationState extends State<TextParticleAnimation>
   }
 
   void _initializeTicker() {
-    _ticker = Ticker((_) {
+    _ticker = createTicker((_) {
       for (Particle particle in _particles) {
         particle.update();
       }
       _repaintNotifier.value++;
-      print("reading");
     });
   }
 
@@ -119,12 +123,7 @@ class _TextParticleAnimationState extends State<TextParticleAnimation>
 
   void _initGenerateParticles() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      var view = ui.PlatformDispatcher.instance.views.first;
-      var size = Size(
-        view.physicalConstraints.maxWidth,
-        view.physicalConstraints.maxHeight,
-      );
-      generateParticles(size / 4);
+      generateParticles();
     });
   }
 
@@ -147,17 +146,25 @@ class _TextParticleAnimationState extends State<TextParticleAnimation>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    return CustomPaint(
-      painter: TextParticlePainter(
-        _particles,
-        Theme.of(context).primaryColor,
-        _repaintNotifier,
+    return SizedBox(
+      key: _containerKey,
+      child: CustomPaint(
+        painter: TextParticlePainter(
+          _particles,
+          Theme.of(context).primaryColor,
+          _repaintNotifier,
+        ),
+        size: size,
       ),
-      size: size,
     );
   }
 
-  Future<void> generateParticles(Size size) async {
+  Future<void> generateParticles() async {
+    final renderBox =
+        _containerKey.currentContext?.findRenderObject() as RenderBox?;
+
+    if (renderBox == null) return;
+    final size = renderBox.size;
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     final TextPainter textPainter = TextPainter(
@@ -192,6 +199,8 @@ class _TextParticleAnimationState extends State<TextParticleAnimation>
     final offsetX = (size.width - width) / 2;
     final offsetY = (size.height - height) / 2;
 
+    _particles.clear();
+
     for (int i = 0; i < particleCount; i++) {
       int x, y;
 
@@ -203,7 +212,7 @@ class _TextParticleAnimationState extends State<TextParticleAnimation>
       _particles.add(
         Particle(
           position: Offset(
-            -size.width + math.Random().nextDouble() * size.width * 2,
+            math.Random().nextDouble() * size.width * 3 - size.width,
             math.Random().nextDouble() * size.height * 2,
           ),
           basePosition: Offset(

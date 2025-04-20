@@ -15,6 +15,9 @@ class _AnimatedSliderPageState extends State<AnimatedSliderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Animated Slider'),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

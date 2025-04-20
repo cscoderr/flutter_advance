@@ -6,9 +6,11 @@ import 'package:animation_playground/apple_book_scroll/apple_book_scroll.dart';
 import 'package:animation_playground/blur_animation/blur_animation.dart';
 import 'package:animation_playground/core/core.dart';
 import 'package:animation_playground/coverflow_carousel/coverflow_carousel.dart';
+import 'package:animation_playground/particle_clock/particle_clock.dart';
 import 'package:animation_playground/petal_menu/petal_menu.dart';
 import 'package:animation_playground/photo_extractor/photo_extractor.dart';
 import 'package:animation_playground/rainbow_sticks/rainbow_sticks.dart';
+import 'package:animation_playground/slide_to_confirm/view/slide_to_confirm_page.dart';
 import 'package:animation_playground/text_particle/text_particle.dart';
 import 'package:animation_playground/text_shimmer_wave/text_shimmer_wave.dart';
 import 'package:animation_playground/thanos_snap_effect/view/thanos_snap_effect_page.dart';
@@ -52,11 +54,26 @@ class App extends StatelessWidget {
         children: [
           const AppTextDivider(text: 'New'),
           AppElevatedButton(
+            text: "Slide to Submit",
+            icon: const Icon(Iconsax.slider_horizontal),
+            onPressed: () =>
+                Navigator.of(context).push(SlideToConfirmPage.route()),
+          ),
+          const SizedBox(height: 20),
+          AppElevatedButton(
+            text: "Particle Clock",
+            icon: const Icon(Iconsax.clock),
+            onPressed: () =>
+                Navigator.of(context).push(ParticleClockPage.route()),
+          ),
+          const SizedBox(height: 20),
+          AppElevatedButton(
             text: "Text Particle Animation",
             icon: const Icon(Iconsax.text),
             onPressed: () =>
                 Navigator.of(context).push(TextParticlePage.route()),
           ),
+
           const AppTextDivider(text: 'Latest'),
           AppElevatedButton(
             text: "Apple Book Scroll Animation",
